@@ -1,0 +1,4 @@
+bin/*
+smsapp/Debug/
+smsapp/Release/
+Visual*/

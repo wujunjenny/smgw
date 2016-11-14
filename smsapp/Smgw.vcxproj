@@ -1,0 +1,428 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="ZeroMQ Common Settings.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>SmGW$(PlatformArchitecture)D</TargetName>
+    <IncludePath>../include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>SmGW$(PlatformArchitecture)</TargetName>
+    <IncludePath>../include;$(IncludePath)</IncludePath>
+    <Linkage-czmq>dynamic</Linkage-czmq>
+    <Linkage-libsodium>dynamic</Linkage-libsodium>
+    <Linkage-libzmq>dynamic</Linkage-libzmq>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <MinimalRebuild>true</MinimalRebuild>
+      <AdditionalIncludeDirectories>.;..\Common;..\DrvManager;IFMng;IDHead;..\DbDriver;CommServiceIF;UserCheck;Environment;SmcIF;OMCServer;TaskPool;UserMng;SMTABLE;..\md5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_NO_ICDCOMM_;__public_drvmanager__;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerOutput>All</AssemblerOutput>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <XMLDocumentationFileName>$(IntDir)</XMLDocumentationFileName>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>$(IntDir)SmsApp.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>$(OutDir)$(TargetName).bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>winmm.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>.;..\Common;..\DrvManager;IFMng;IDHead;..\DbDriver;CommServiceIF;UserCheck;Environment;SmcIF;OMCServer;TaskPool;UserMng;..\Alarmer;SMTABLE;..\md5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_NO_ICDCOMM_;__public_drvmanager__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerOutput>AssemblyAndMachineCode</AssemblerOutput>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\..\ExeFile\SmsApp\Release\SmsApp.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>$(OutDir)$(TargetName).bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>winmm.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateMapFile>true</GenerateMapFile>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AccountFileCacheMng.cpp" />
+    <ClCompile Include="AccountFlow.cpp" />
+    <ClCompile Include="AccountFlowDlg.cpp" />
+    <ClCompile Include="AckError.cpp" />
+    <ClCompile Include="AckErrSetPage.cpp" />
+    <ClCompile Include="AlarmHandMsgProc.cpp" />
+    <ClCompile Include="AlarmUDPMng.cpp" />
+    <ClCompile Include="CacheConfigPage.cpp" />
+    <ClCompile Include="CmppAndSmpp.cpp" />
+    <ClCompile Include="HttpStatus.cpp" />
+    <ClCompile Include="LogOption.cpp" />
+    <ClCompile Include="MobilePoolMng.cpp" />
+    <ClCompile Include="MOHUTree.cpp" />
+    <ClCompile Include="OmcManager.cpp" />
+    <ClCompile Include="smcif\cmppservice.cpp" />
+    <ClCompile Include="cngpandsmpp.cpp" />
+    <ClCompile Include="cngpservice.cpp" />
+    <ClCompile Include="CnppCodeAndDecode.cpp" />
+    <ClCompile Include="..\common\codeanddecode.cpp" />
+    <ClCompile Include="CommServiceIF\CommServiceCode.cpp" />
+    <ClCompile Include="..\common\commthreadmng.cpp" />
+    <ClCompile Include="ConfigDlg.cpp" />
+    <ClCompile Include="ConfigLogPage.cpp" />
+    <ClCompile Include="ifmng\connpoint.cpp" />
+    <ClCompile Include="ContentFilter.cpp" />
+    <ClCompile Include="DbgViewDlg.cpp" />
+    <ClCompile Include="smcif\ZmqClientService.cpp" />
+    <ClCompile Include="smtable\dealshortmsg.cpp" />
+    <ClCompile Include="DynamicLED.cpp" />
+    <ClCompile Include="Environment\Environment.cpp" />
+    <ClCompile Include="ErrFuncs.cpp" />
+    <ClCompile Include="SmcIF\ESMECode.cpp" />
+    <ClCompile Include="Exp_Filter.cpp" />
+    <ClCompile Include="FileCacheMng.cpp" />
+    <ClCompile Include="FilterDeal.cpp" />
+    <ClCompile Include="FolderDialog.cpp" />
+    <ClCompile Include="..\DrvManager\ICDComDrv.cpp" />
+    <ClCompile Include="SMTABLE\Index.cpp" />
+    <ClCompile Include="InputBoxOne.cpp" />
+    <ClCompile Include="InputBoxTwo.cpp" />
+    <ClCompile Include="InputDestAddr.cpp" />
+    <ClCompile Include="LogManager.cpp" />
+    <ClCompile Include="..\MD5\md5_dgst.cpp" />
+    <ClCompile Include="..\MD5\md5_one.cpp" />
+    <ClCompile Include="..\Common\MessageQueueEx.cpp" />
+    <ClCompile Include="..\Common\msgqueue.cpp" />
+    <ClCompile Include="TaskPool\MsgTrace.cpp" />
+    <ClCompile Include="commserviceif\mtnservice.cpp" />
+    <ClCompile Include="OMCServer\OMCServer.cpp" />
+    <ClCompile Include="OtherConfigPage.cpp" />
+    <ClCompile Include="PageStatus.cpp" />
+    <ClCompile Include="Pool.cpp" />
+    <ClCompile Include="PrePayAddrTable.cpp" />
+    <ClCompile Include="ptopandsmpp.cpp" />
+    <ClCompile Include="ptopservice.cpp" />
+    <ClCompile Include="QueryUserFeeType.cpp" />
+    <ClCompile Include="..\Common\RegKey.cpp" />
+    <ClCompile Include="..\common\routetable.cpp" />
+    <ClCompile Include="SafeFile.cpp" />
+    <ClCompile Include="..\Common\SaveSysEvent.cpp" />
+    <ClCompile Include="ifmng\service.cpp" />
+    <ClCompile Include="ifmng\servicemng.cpp" />
+    <ClCompile Include="SgipAndSmpp.cpp" />
+    <ClCompile Include="smcif\sgipservice.cpp" />
+    <ClCompile Include="..\Common\ShareMemManager.cpp" />
+    <ClCompile Include="smtable\shortmsg.cpp" />
+    <ClCompile Include="SmcIF\SmapAndInnerTrans.cpp" />
+    <ClCompile Include="SmcIF\SmapCode.cpp" />
+    <ClCompile Include="SmcIF\SmapComp.cpp" />
+    <ClCompile Include="SmcIF\smapuncomp.cpp" />
+    <ClCompile Include="smcif\smccnppif.cpp" />
+    <ClCompile Include="SmcIF\SmcIF.cpp" />
+    <ClCompile Include="SmcIF\SmcIFWaitAck.cpp" />
+    <ClCompile Include="SmgpAndSmpp.cpp" />
+    <ClCompile Include="smgpservice.cpp" />
+    <ClCompile Include="SmcIF\SmppAndInnerTrans.cpp" />
+    <ClCompile Include="SmcIF\SmppCode.cpp" />
+    <ClCompile Include="smcif\smppdecode.cpp" />
+    <ClCompile Include="smcif\smpprecode.cpp" />
+    <ClCompile Include="SmcIF\SmsAndEICode.cpp" />
+    <ClCompile Include="SmsApp.cpp" />
+    <ClCompile Include="SmsAppDlg.cpp" />
+    <ClCompile Include="..\drvmanager\sockconnect.cpp" />
+    <ClCompile Include="SockContral.cpp" />
+    <ClCompile Include="..\Driver\SocketObj.cpp" />
+    <ClCompile Include="..\drvmanager\sockmng.cpp" />
+    <ClCompile Include="..\common\sockmsgqueue.cpp" />
+    <ClCompile Include="..\drvmanager\sockserver.cpp" />
+    <ClCompile Include="TaskPool\StatisticsTask.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\drvmanager\syssockmng.cpp" />
+    <ClCompile Include="SystemConfig.cpp" />
+    <ClCompile Include="SMTABLE\Table.cpp" />
+    <ClCompile Include="..\DrvManager\Thread.cpp" />
+    <ClCompile Include="..\common\threadandtimer.cpp" />
+    <ClCompile Include="..\common\threadmng.cpp" />
+    <ClCompile Include="..\common\timermng.cpp" />
+    <ClCompile Include="..\Common\tlv.cpp" />
+    <ClCompile Include="..\Common\TrayIcon.cpp" />
+    <ClCompile Include="..\common\Tree10.cpp" />
+    <ClCompile Include="TreeTable256.cpp" />
+    <ClCompile Include="UnwelcomeDlg.cpp" />
+    <ClCompile Include="ifmng\waitresp.cpp" />
+    <ClCompile Include="WordAnalyse.cpp" />
+    <ClCompile Include="taskpool\work.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SmsApp.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AccountFileCacheMng.h" />
+    <ClInclude Include="AccountFlow.h" />
+    <ClInclude Include="AccountFlowDlg.h" />
+    <ClInclude Include="AckError.h" />
+    <ClInclude Include="AckErrSetPage.h" />
+    <ClInclude Include="AlarmHandMsgProc.h" />
+    <ClInclude Include="AlarmMsgDef.h" />
+    <ClInclude Include="AlarmUDPMng.h" />
+    <ClInclude Include="CacheConfigPage.h" />
+    <ClInclude Include="..\Common\ChargeHead.h" />
+    <ClInclude Include="..\Common\CmdDef.h" />
+    <ClInclude Include="CmppAndSmpp.h" />
+    <ClInclude Include="Cmppdef.h" />
+    <ClInclude Include="HttpStatus.h" />
+    <ClInclude Include="LogOption.h" />
+    <ClInclude Include="MobilePoolMng.h" />
+    <ClInclude Include="MOHUTree.h" />
+    <ClInclude Include="OmcManager.h" />
+    <ClInclude Include="smcif\cmppservice.h" />
+    <ClInclude Include="cngpandsmpp.h" />
+    <ClInclude Include="cngpdef.h" />
+    <ClInclude Include="cngpservice.h" />
+    <ClInclude Include="cnppCodeAnddecode.h" />
+    <ClInclude Include="..\common\codeanddecode.h" />
+    <ClInclude Include="CommServiceIF\CommServiceCode.h" />
+    <ClInclude Include="..\common\commthreadmng.h" />
+    <ClInclude Include="ConfigDlg.h" />
+    <ClInclude Include="ConfigLogPage.h" />
+    <ClInclude Include="ifmng\connpoint.h" />
+    <ClInclude Include="ContentFilter.h" />
+    <ClInclude Include="..\Common\DataType.h" />
+    <ClInclude Include="DbgViewDlg.h" />
+    <ClInclude Include="smcif\ZmqClientService.h" />
+    <ClInclude Include="smtable\dealshortmsg.h" />
+    <ClInclude Include="DynamicLED.h" />
+    <ClInclude Include="Environment\Environment.h" />
+    <ClInclude Include="ErrFuncs.h" />
+    <ClInclude Include="..\Common\ErrorLevel.h" />
+    <ClInclude Include="SmcIF\ESMECode.h" />
+    <ClInclude Include="..\Common\eventlog.h" />
+    <ClInclude Include="Exp_Filter.h" />
+    <ClInclude Include="..\DrvManager\Fep.h" />
+    <ClInclude Include="FileCacheMng.h" />
+    <ClInclude Include="FilterDeal.h" />
+    <ClInclude Include="FolderDialog.h" />
+    <ClInclude Include="..\DrvManager\ICDComDrv.h" />
+    <ClInclude Include="SMTABLE\Index.h" />
+    <ClInclude Include="InputBoxOne.h" />
+    <ClInclude Include="InputBoxTwo.h" />
+    <ClInclude Include="InputDestAddr.h" />
+    <ClInclude Include="LogManager.h" />
+    <ClInclude Include="MainApp.h" />
+    <ClInclude Include="..\MD5\md32_common.h" />
+    <ClInclude Include="..\MD5\md5.h" />
+    <ClInclude Include="..\MD5\md5_locl.h" />
+    <ClInclude Include="..\Common\MessageQueueEx.h" />
+    <ClInclude Include="msg.h" />
+    <ClInclude Include="..\Common\msgex.h" />
+    <ClInclude Include="..\Common\msginner.h" />
+    <ClInclude Include="..\Common\msgpure.h" />
+    <ClInclude Include="..\Common\msgqueue.h" />
+    <ClInclude Include="TaskPool\MsgTrace.h" />
+    <ClInclude Include="commserviceif\mtnservice.h" />
+    <ClInclude Include="..\Common\NewMsgHead.h" />
+    <ClInclude Include="OMCServer\OMCServer.h" />
+    <ClInclude Include="..\MD5\opensslconf.h" />
+    <ClInclude Include="..\MD5\opensslv.h" />
+    <ClInclude Include="OtherConfigPage.h" />
+    <ClInclude Include="PageStatus.h" />
+    <ClInclude Include="Pool.h" />
+    <ClInclude Include="PrePayAddrTable.h" />
+    <ClInclude Include="ptopandsmpp.h" />
+    <ClInclude Include="PToPDef.h" />
+    <ClInclude Include="ptopservice.h" />
+    <ClInclude Include="QueryUserFeeType.h" />
+    <ClInclude Include="..\Common\RegKey.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="..\common\routetable.h" />
+    <ClInclude Include="SafeFile.h" />
+    <ClInclude Include="ifmng\service.h" />
+    <ClInclude Include="ifmng\servicemng.h" />
+    <ClInclude Include="SgipAndSmpp.h" />
+    <ClInclude Include="SgipDef.h" />
+    <ClInclude Include="smcif\sgipservice.h" />
+    <ClInclude Include="..\Common\ShareMemManager.h" />
+    <ClInclude Include="smtable\shortmsg.h" />
+    <ClInclude Include="SmcIF\SmapAndInnerTrans.h" />
+    <ClInclude Include="SmcIF\SmapCode.h" />
+    <ClInclude Include="SmcIF\SmapCompAndUnComp.h" />
+    <ClInclude Include="SmcIF\SMAPDEF.H" />
+    <ClInclude Include="smcif\smccnppif.h" />
+    <ClInclude Include="SmcIF\SmcIF.h" />
+    <ClInclude Include="SmcIF\SmcIFWaitAck.h" />
+    <ClInclude Include="..\Common\smcmacro.h" />
+    <ClInclude Include="..\Common\smcmacroex.h" />
+    <ClInclude Include="..\Common\SMEIMsg.h" />
+    <ClInclude Include="SmgpAndSmpp.h" />
+    <ClInclude Include="Smgpdef.h" />
+    <ClInclude Include="smgpservice.h" />
+    <ClInclude Include="SmcIF\SmppAndInnerTrans.h" />
+    <ClInclude Include="SmcIF\SmppCode.h" />
+    <ClInclude Include="smcif\smppcodeanddecode.h" />
+    <ClInclude Include="SmcIF\Smppdef.h" />
+    <ClInclude Include="..\Common\SmppExDef.h" />
+    <ClInclude Include="..\Common\Sms_Msginner.h" />
+    <ClInclude Include="SmcIF\SmsAndEICode.h" />
+    <ClInclude Include="SmsApp.h" />
+    <ClInclude Include="SmsAppDlg.h" />
+    <ClInclude Include="..\Common\SmsMacroMFC.h" />
+    <ClInclude Include="..\drvmanager\sockconnect.h" />
+    <ClInclude Include="SockContral.h" />
+    <ClInclude Include="..\Driver\SocketObj.h" />
+    <ClInclude Include="..\drvmanager\sockmng.h" />
+    <ClInclude Include="..\common\sockmsgqueue.h" />
+    <ClInclude Include="..\drvmanager\sockserver.h" />
+    <ClInclude Include="TaskPool\StatisticsTask.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\drvmanager\syssockmng.h" />
+    <ClInclude Include="SystemConfig.h" />
+    <ClInclude Include="SMTABLE\Table.h" />
+    <ClInclude Include="..\DrvManager\Thread.h" />
+    <ClInclude Include="..\common\threadandtimer.h" />
+    <ClInclude Include="..\common\threadmng.h" />
+    <ClInclude Include="..\common\timermng.h" />
+    <ClInclude Include="..\Common\tlv.h" />
+    <ClInclude Include="..\Common\TrayIcon.h" />
+    <ClInclude Include="..\common\Tree10.h" />
+    <ClInclude Include="TreeTable256.h" />
+    <ClInclude Include="UnwelcomeDlg.h" />
+    <ClInclude Include="ifmng\waitresp.h" />
+    <ClInclude Include="WordAnalyse.h" />
+    <ClInclude Include="taskpool\work.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="res\cursor1.cur" />
+    <CustomBuild Include="res\huawei.bmp" />
+    <CustomBuild Include="res\huawei2.ico" />
+    <CustomBuild Include="res\Recycle Red.ico" />
+    <CustomBuild Include="res\share.ico" />
+    <CustomBuild Include="res\SmsApp.ico" />
+    <CustomBuild Include="res\SmsApp.rc2">
+      <FileType>RC</FileType>
+    </CustomBuild>
+    <CustomBuild Include="res\work2.BMP" />
+    <CustomBuild Include="res\work3.bmp" />
+    <CustomBuild Include="res\work5.bmp" />
+    <CustomBuild Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="SmsApp.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

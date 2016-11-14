@@ -1,0 +1,574 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SmsApp.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\share.ico"
+IDI_LINK                ICON                    "res\\Recycle Red.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG 0, 0, 263, 74
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SMGW"
+FONT 10, "宋体"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,9,15,20,20
+    LTEXT           "版本信息：ISMP V3.1R002 —— 行业SP接入网关V1.0.5",IDC_STATIC,36,14,210,11
+    LTEXT           "版权所有：深圳市协尔信息系统有限公司",IDC_STATIC,36,30,140,10
+    DEFPUSHBUTTON   "确定",IDOK,206,53,50,14,WS_GROUP
+    LTEXT           "R20120730",IDC_LABEL_ACTIVE_USER_COUNT,188,30,58,8
+    LTEXT           "",IDC_DYNAMIC_COUNT,35,54,44,8,NOT WS_VISIBLE
+END
+
+IDD_SMSAPP_DIALOG DIALOGEX 0, 0, 455, 367
+STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 9, "宋体", 0, 0, 0x1
+BEGIN
+    CONTROL         178,IDC_STATIC,"Static",SS_BITMAP | SS_CENTERIMAGE,7,3,441,153
+    DEFPUSHBUTTON   "关   闭",IDOK,359,334,81,15
+    RTEXT           "发送短消息数",IDC_STATIC,35,247,49,8
+    RTEXT           "ACK接收总数",IDC_STATIC,39,296,45,8
+    PUSHBUTTON      "0",IDC_RECVACK,88,293,61,14,BS_FLAT
+    RTEXT           "接收成功ACK数",IDC_STATIC,31,263,53,8
+    RTEXT           "接收失败ACK数",IDC_STATIC,31,279,53,8
+    RTEXT           "ACK异常数",IDC_STATIC,47,311,37,8
+    PUSHBUTTON      "0",IDC_ACKSUC,88,261,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_ACKFAIL,88,277,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_ACKABNOR,88,309,61,14,BS_FLAT
+    RTEXT           "等待队列缓存消息数",IDC_STATIC,182,295,71,8
+    RTEXT           "接收短消息数",IDC_STATIC,35,167,49,8
+    PUSHBUTTON      "0",IDC_WAITCOUNT,257,293,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_DELIVER,88,165,61,14,BS_FLAT
+    PUSHBUTTON      "计数清零",ID_CLEAR,359,223,81,15
+    RTEXT           "文件缓存消息数",IDC_STATIC,183,328,70,8
+    PUSHBUTTON      "0",IDC_FILECACHECOUNT,257,325,61,14,BS_FLAT
+    RTEXT           "收到状态报告数",IDC_STATIC,196,167,57,8
+    PUSHBUTTON      "0",IDC_REPORT,257,165,61,14,BS_FLAT
+    RTEXT           "收到成功状态报告数",IDC_STATIC,173,183,80,8
+    RTEXT           "收到失败状态报告数",IDC_STATIC,173,199,80,8
+    PUSHBUTTON      "0",IDC_SUCREPORT,257,181,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_FAILREPORT,257,197,61,14,BS_FLAT
+    RTEXT           "ACK错误重发数",IDC_STATIC,31,327,53,8
+    PUSHBUTTON      "0",IDC_ACKERRRESUBMIT,88,325,61,14,BS_FLAT
+    RTEXT           "ACK超时重发数",IDC_STATIC,31,344,53,8
+    PUSHBUTTON      "0",IDC_ACKOUTRESUBMIT,88,341,61,14,BS_FLAT
+    PUSHBUTTON      "Ack错误码统计",IDC_B_OpenDbgView,359,185,81,15
+    RTEXT           "发送状态报告数",IDC_STATIC,196,248,57,8
+    RTEXT           "成功状态报告发送数",IDC_STATIC,180,263,73,8
+    RTEXT           "失败状态报告发送数",IDC_STATIC,180,279,73,8
+    PUSHBUTTON      "0",IDC_SENDREPORT,257,245,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_SUCREPORTSENDS,257,261,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_FAILREPORTSENDS,257,277,61,14,BS_FLAT
+    PUSHBUTTON      "帐号流量",IDC_ACCOUNTFLOW,359,204,81,15
+    RTEXT           "发送成功Ack数",IDC_STATIC,31,183,53,8
+    RTEXT           "发送失败Ack数",IDC_STATIC,31,199,53,8
+    PUSHBUTTON      "0",IDC_SENDSUCACK,88,181,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_SENDFAILACK,88,197,61,14,BS_FLAT
+    GROUPBOX        "",IDC_STATIC,7,156,322,203
+    GROUPBOX        "",IDC_STATIC,350,156,98,203
+    RTEXT           "发送队列缓存消息数",IDC_STATIC,183,311,70,8
+    PUSHBUTTON      "0",IDC_SENDQUECOUNT,257,309,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_SENDCOUNT,88,245,61,14,BS_FLAT
+    PUSHBUTTON      "配置系统参数",IDC_CONFIG,359,166,81,15
+    RTEXT           "发送鉴权请求数",IDC_STATIC,27,215,57,8
+    RTEXT           "鉴权请求ACK接收数",IDC_STATIC,15,231,69,8
+    PUSHBUTTON      "0",IDC_RECVAUTHREQACKCOUNT,88,229,61,14,BS_FLAT
+    RTEXT           "发送鉴权确认数",IDC_STATIC,196,215,57,8
+    PUSHBUTTON      "0",IDC_SENDAUTHCNFMCOUNT,257,213,61,14,BS_FLAT
+    RTEXT           "鉴权确认Ack接收数",IDC_STATIC,184,231,69,8
+    PUSHBUTTON      "0",IDC_RCVAUTHCNFMACKCOUNT,257,229,61,14,BS_FLAT
+    PUSHBUTTON      "0",IDC_SENDAUTHREQCOUNT,88,213,61,14,BS_FLAT
+    PUSHBUTTON      "加载预付费号段表",IDC_LOADPREPAY,359,242,81,15
+    PUSHBUTTON      "查询用户计费类型",IDC_QUERY_USERFEETYPE,359,261,81,15
+    PUSHBUTTON      "调试日志(关)",IDC_BTNDebug,359,298,81,15
+    PUSHBUTTON      "状态",IDC_BUTTON_HTTP,359,316,81,15
+    PUSHBUTTON      "加载业务代码转换",IDC_BUTTON_LOADSERVICETABLE,359,280,81,15
+END
+
+IDD_DIALOG_INPUT_ONE DIALOG 0, 0, 136, 63
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "参数输入"
+FONT 10, "System"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,42,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,79,42,50,14
+    EDITTEXT        IDC_VALUE,7,13,122,15,ES_AUTOHSCROLL
+END
+
+IDD_DlgViewDbgInfo DIALOG 0, 0, 143, 183
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ack错误码统计"
+FONT 10, "宋体"
+BEGIN
+    DEFPUSHBUTTON   "关闭",IDOK,101,161,36,15
+    EDITTEXT        IDC_E_Error_Counter,7,7,130,149,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+    PUSHBUTTON      "刷新",ID_B_Refresh,48,161,36,15
+    PUSHBUTTON      "清空",IDC_SETNULL,7,161,36,15
+END
+
+IDD_ACCOUNTFLOW DIALOG 0, 0, 387, 335
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "帐号流量统计"
+FONT 10, "宋体"
+BEGIN
+    DEFPUSHBUTTON   "关闭",IDOK,7,314,38,14
+    PUSHBUTTON      "刷新",IDREFRESH,342,314,38,14
+    CONTROL         "List1",IDC_LIST_ACCOUNTFLOW,"SysListView32",LVS_REPORT | WS_BORDER | WS_TABSTOP,7,7,373,303
+    PUSHBUTTON      "清零",IDC_CLEAR,300,314,38,14
+    PUSHBUTTON      "设置被叫号码段",IDC_DESTADDR,243,314,53,14
+    EDITTEXT        IDC_CLEARTIME,54,316,162,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+END
+
+IDD_INPUTDESTADDR DIALOG 0, 0, 135, 49
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "输入被叫号码段"
+FONT 10, "宋体"
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,96,28,32,14
+    PUSHBUTTON      "取消",IDCANCEL,55,28,32,14
+    LTEXT           "被叫号码段:",IDC_STATIC,8,10,42,8
+    EDITTEXT        1107,51,7,77,14,ES_AUTOHSCROLL | ES_NUMBER
+END
+
+IDD_CONFIGDLG DIALOG 0, 0, 340, 225
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "网关系统参数设置"
+FONT 9, "宋体"
+BEGIN
+END
+
+IDD_CONFIGLOGPAGE DIALOGEX 0, 0, 326, 201
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "日志设置"
+FONT 9, "宋体", 0, 0, 0x0
+BEGIN
+    LTEXT           "日志级别：",IDC_STATIC,35,56,41,8
+    CONTROL         "是否写发送状态报告日志",IDC_REPORTLOGCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,35,124,104,10
+    LTEXT           "帐号名：",IDC_STATIC,35,143,33,8
+    EDITTEXT        IDC_REPORTLOGACCNT,78,141,66,14,ES_AUTOHSCROLL
+    GROUPBOX        "发送状态报告日志",IDC_STATIC,7,90,312,73
+    GROUPBOX        "网关输出的日志级别",IDC_STATIC,7,7,312,69
+    LTEXT           "说明： “错误级别（0）”＝输出错误信息",IDC_STATIC,36,24,153,8
+    LTEXT           "说明：将某一帐号下发送的状态报告记录到日志文件中，该配置不会被保存",IDC_STATIC,35,106,265,8
+    PUSHBUTTON      "应用",IDC_SAVECONFIG,269,180,50,14
+    COMBOBOX        IDC_LOGLEVEL,78,54,66,110,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "“调试级别（1）”＝输出错误信息和提示信息",IDC_STATIC,64,38,165,8
+END
+
+IDD_SETACKERRPAGE DIALOGEX 0, 0, 327, 201
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Ack错误重发设置"
+FONT 9, "宋体", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "<--- 新增",IDC_ADDNEW,226,138,77,14
+    PUSHBUTTON      "---> 删除",IDC_DEL,226,166,77,14
+    LISTBOX         IDC_LIST_ERR,7,22,185,172,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP,WS_EX_DLGMODALFRAME
+    LTEXT           "错误码",IDC_STATIC,225,55,32,11
+    EDITTEXT        IDC_ERRNO,264,54,39,15,ES_AUTOHSCROLL
+    LTEXT           "处理方式",IDC_STATIC,225,83,32,11
+    LTEXT           "错误码重发列表：",IDC_STATIC,8,10,74,11
+    LTEXT           "重发次数",IDC_STATIC,225,111,32,10
+    EDITTEXT        IDC_COUNT,264,109,39,15,ES_AUTOHSCROLL
+    COMBOBOX        IDC_DEAL,264,83,39,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP,WS_EX_RTLREADING
+    CONTROL         "Ack错误或超时重发",IDC_ACKERRRESENDCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,224,30,80,10
+    GROUPBOX        "设置",IDC_STATIC,208,7,112,187
+END
+
+IDD_CACHECONFIG DIALOG 0, 0, 326, 201
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "缓存设置"
+FONT 9, "宋体"
+BEGIN
+    DEFPUSHBUTTON   "应用",IDOK,269,180,50,14
+    CONTROL         "启用文件缓存",IDC_FILECACHEONOFF,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,31,85,64,10
+    LTEXT           "缓存文件最大消息数：",IDC_STATIC,31,103,81,8
+    EDITTEXT        IDC_MAXFILECACHESMCOUNT,114,100,58,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "等待队列消息生存期：",IDC_STATIC,25,26,81,8
+    EDITTEXT        IDC_WAITQUETIMEOUT,108,24,58,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "（分钟）",IDC_STATIC,170,26,33,8
+    GROUPBOX        "内存缓存",IDC_STATIC,7,7,312,49
+    GROUPBOX        "文件缓存",IDC_STATIC,7,69,312,49
+END
+
+IDD_OTHERCONFIG DIALOG 0, 0, 326, 201
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "其他配置"
+FONT 9, "宋体"
+BEGIN
+    DEFPUSHBUTTON   "应用",IDOK,269,180,50,14
+    LTEXT           "对端网关程序目录",IDC_STATIC,15,51,64,8
+    EDITTEXT        IDC_REMOTEGWPATH,82,48,197,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "浏览...",IDC_BROWSE,279,48,36,14
+    CONTROL         "启用内容过滤",IDC_FILTERCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,46,20,64,10
+    PUSHBUTTON      "重新加载",IDC_FILTERRELOAD,140,17,41,14
+    GROUPBOX        "内容过滤",IDC_STATIC,7,8,312,27
+    GROUPBOX        "目录",IDC_STATIC,7,38,312,28
+    CONTROL         "启用鉴权",IDC_SPMS_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,46,83,48,10
+    GROUPBOX        "鉴权设置",IDC_STATIC,7,70,312,29
+    CONTROL         "拦截SP下发的包月扣费消息",IDC_FEEMONTHMSG_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,137,83,112,10
+END
+
+IDD_QUERY_USERFEETYPE DIALOGEX 0, 0, 217, 92
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "查询用户计费类型：预付费、后付费"
+FONT 9, "宋体", 0, 0, 0x1
+BEGIN
+    LTEXT           "请输入用户的号码或号段",IDC_STATIC,7,9,98,8
+    EDITTEXT        IDC_USERNUM,7,21,128,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "查询",IDC_QUERYUFT,151,21,50,14
+    LTEXT           "查询结果",IDC_STATIC,7,44,65,8
+    DEFPUSHBUTTON   "关闭",IDOK,153,70,50,14
+    EDITTEXT        IDC_QUERYUFT_RESULT,7,55,128,29,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+END
+
+IDD_DIALOG_HTTP_STATUS DIALOGEX 0, 0, 316, 280
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,259,256,50,14
+    LTEXT           "Static",IDC_STATIC_STATUS,7,7,177,125
+    PUSHBUTTON      "日志开关",IDC_BUTTON_LOG_OPTION,259,233,50,14
+    LTEXT           "Static",IDC_STATIC_DRV,7,164,227,106
+    PUSHBUTTON      "sock info",IDC_BUTTON_SOCKINFO,259,209,50,14
+    PUSHBUTTON      "test dump",IDC_BUTTON_DUMP,259,188,50,14
+END
+
+IDD_DIALOG_LOGOPTION DIALOGEX 0, 0, 316, 270
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "日志开关"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,205,249,50,14
+    PUSHBUTTON      "取消",IDCANCEL,259,249,50,14
+    CONTROL         "",IDC_PROPERTYGRID_RC,"Static",SS_BLACKFRAME,7,7,156,256
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "FileDescription", "SP管理平台（ISMP）"
+            VALUE "FileVersion", "V2.5R414"
+            VALUE "InternalName", "SMGW"
+            VALUE "LegalCopyright", "版权所有 (C) 2006"
+            VALUE "OriginalFilename", "SMGW.EXE"
+            VALUE "ProductName", "SP管理平台（ISMP）"
+            VALUE "ProductVersion", "V2.5R414"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 256
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 67
+    END
+
+    IDD_SMSAPP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 448
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 359
+    END
+
+    IDD_DIALOG_INPUT_ONE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 129
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+
+    IDD_DlgViewDbgInfo, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 136
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_ACCOUNTFLOW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 380
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 328
+    END
+
+    IDD_INPUTDESTADDR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 128
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 42
+    END
+
+    IDD_CONFIGDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 333
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_CONFIGLOGPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 319
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 194
+    END
+
+    IDD_SETACKERRPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 320
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+    END
+
+    IDD_CACHECONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 319
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+    END
+
+    IDD_OTHERCONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 319
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+    END
+
+    IDD_QUERY_USERFEETYPE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 85
+    END
+
+    IDD_DIALOG_HTTP_STATUS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_DIALOG_LOGOPTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SETACKERRPAGE DLGINIT
+BEGIN
+    IDC_DEAL, 0x403, 7, 0
+0xbbb2, 0xd8d6, 0xa2b7, "\000" 
+    IDC_DEAL, 0x403, 5, 0
+0xd8d6, 0xa2b7, "\000" 
+    IDC_DEAL, 0x403, 5, 0
+0xc9b3, 0xa6b9, "\000" 
+    0
+END
+
+IDD_CONFIGLOGPAGE DLGINIT
+BEGIN
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xedb4, 0xf3ce, 0xb6bc, 0xf0b1, 0xa8a3, 0xa330, 0x00a9, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xf7b5, 0xd4ca, 0xb6bc, 0xf0b1, 0xa8a3, 0xa331, 0x00a9, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xf7b5, 0xd4ca, 0xb6bc, 0xf0b1, 0xa8a3, 0xa332, 0x00a9, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xf7b5, 0xd4ca, 0xb6bc, 0xf0b1, 0xa8a3, 0xa333, 0x00a9, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xf7b5, 0xd4ca, 0xb6bc, 0xf0b1, 0xa8a3, 0xa334, 0x00a9, 
+    IDC_LOGLEVEL, 0x403, 14, 0
+0xf7b5, 0xd4ca, 0xb6bc, 0xf0b1, 0xa8a3, 0xa335, 0x00a9, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR1             CURSOR                  "res\\cursor1.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP_FACE         BITMAP                  "res\\work3.bmp"
+IDB_BITMAP2             BITMAP                  "res\\work5.bmp"
+IDB_BITMAP3             BITMAP                  "res\\work2.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "关于“SP管理平台（ISMP）—SP接入网关模块”"
+    IDP_SOCKETS_INIT_FAILED "Windows Socket Init Failed."
+    IDS_PROPSHT_CAPTION     "SP管理平台"
+    IDS_SRV_SERVICEID       "内部业务码"
+    IDS_SRV_FEEUSERTYPE     "扣费用户类型"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_SRV_FEETYPE         "扣费类型"
+    IDS_SRV_FEECODE         "资费"
+    IDS_SRV_MSGSRC          "企业代码"
+    IDS_SRV_NEWSERVICECODE  "新业务码"
+    IDS_SRV_TYPE            "资费类型"
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\SmsApp.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

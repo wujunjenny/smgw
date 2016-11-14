@@ -1,0 +1,27 @@
+// SocketObj.cpp: implementation of the CSocketObj class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+//#include "SmsApp.h"
+#include "SocketObj.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[]=__FILE__;
+#define new DEBUG_NEW
+#endif
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+CSocketObj::CSocketObj()
+{
+
+}
+
+CSocketObj::~CSocketObj()
+{
+
+}

@@ -1,0 +1,8 @@
+内容过滤文件配置说明：
+
+;updated by hyh 2011-12-23 for 广西行业汇聚入口
+文件格式修改：第一行为'ForbitLevel = 2',表示当前禁止下发的级别为2。
+;end by hyh
+
+格式：（1）“过滤的内容 + LevelSplitStr + 过滤级别”， 其中“LevelSplitStr”为网关配置文件iSmgwConfig.ini中的“LevelSplitStr”配置项。
+      （2）“过滤的内容”，此时级别是默认级别，即网关配置文件iSmgwConfig.ini中的“InitLevel”配置项配置的级别

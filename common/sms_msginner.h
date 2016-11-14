@@ -1,0 +1,18 @@
+
+#ifndef _SMSMSGINNER_H_INCLUDED_
+#define _SMSMSGINNER_H_INCLUDED_
+
+#define MAX_EXT_DATA_LEN	8
+
+#define MSG_HEADER_INNER \
+	DWORD nCommand;	\
+	DWORD nInterfaceID;	\
+	char sExtData[MAX_EXT_DATA_LEN]; \
+	DWORD nLen;
+
+typedef struct tag_MI_ONLYHEADER
+{
+	MSG_HEADER_INNER
+} MI_ONLYHEADER;
+
+#endif	//_SMSMSGINNER_H_INCLUDED_
