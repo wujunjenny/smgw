@@ -454,7 +454,7 @@ int CSgipService::OnRead(LPVOID pOrgBuff,int nOrgSize)
     {
         OnTraceInfo(IF_TRACE_READ, (LPCSTR)pOrgBuff, nOrgSize,(LPCSTR)pDestBuff);
         Sgip_Message_header *pCodeHead=(Sgip_Message_header*)pOrgBuff;
-        int nComtype=0;
+        unsigned long nComtype=0;
 				nComtype=ntohl(pCodeHead->Command_ID); 
 	
 	    switch(	nComtype )
@@ -956,7 +956,7 @@ void CSgipService::OnBindAck(PTRMSG pMsg)
         }
         CString sStr;
         sStr.Format("帐号%s下的接口%d连接成功", \
-            sAccountName, GetIFID());
+            (LPCTSTR)sAccountName, GetIFID());
 		TRACE("%s\n",sStr);
 		//***SMGW35-13, 2004-10-12, jdz, modi begin***//
         GetSmsApp()->WriteTestRecord((LPCSTR)sStr, 1);

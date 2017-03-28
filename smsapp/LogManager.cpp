@@ -285,8 +285,9 @@ void CommonLog::BaseWrite( char * const msg, BYTE lv, bool lineflag )
 
 		char * p = NULL;
 		char timstr[ 32 ];
-
-		m_pool.PutPool( "[", 1 );
+		p = "[";
+		//m_pool.PutPool( "[", 1 );
+		m_pool.PutPool( p, 1 );
 		GetTimeStr2( timstr );
 		m_pool.PutPool( timstr, strlen( timstr ) );
 		sprintf( timstr, " %03d %d] ", lv, (++sequence) );
@@ -295,7 +296,9 @@ void CommonLog::BaseWrite( char * const msg, BYTE lv, bool lineflag )
 
 		if ( lineflag )
 		{
-			m_pool.PutPool( "\r\n", 2 );
+			p = "\r\n";
+			//m_pool.PutPool("\r\n", 2 );
+			m_pool.PutPool( p, 2 );
 		}
 		
 /*	

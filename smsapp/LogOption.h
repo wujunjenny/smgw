@@ -25,4 +25,5 @@ public:
 	afx_msg void OnBnClickedOk();
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 	virtual BOOL OnInitDialog();
+	int m_log_level;
 };

@@ -22,11 +22,24 @@ CContentFilter::CContentFilter()
 	m_InitFilterLevel=1;     //默认文件中的过滤单元级别
 	m_SplitStr=";LEVEL=";    //默认文件过滤单元中过滤词与等级数字之间的分割字串
 	
-	m_NoFiterList.AddHead(CString(""));
-	m_NoFiterList.AddHead(CString("\r\n"));
-	m_NoFiterList.AddHead(CString(";"));
-	m_NoFiterList.AddHead(CString(","));
-	m_NoFiterList.AddHead(CString(" "));
+	CString svalue = "";
+	//m_NoFiterList.AddHead(CString(""));
+	m_NoFiterList.AddHead(svalue);
+	svalue="\r\n";
+	//m_NoFiterList.AddHead(CString("\r\n"));
+	m_NoFiterList.AddHead(svalue);
+
+	svalue=";";
+	m_NoFiterList.AddHead(svalue);
+	//m_NoFiterList.AddHead(CString(";"));
+	
+	svalue=",";
+	m_NoFiterList.AddHead(svalue);
+	//m_NoFiterList.AddHead(CString(","));
+	
+	svalue=" ";
+	m_NoFiterList.AddHead(svalue);
+	//m_NoFiterList.AddHead(CString(" "));
 
 	memset(m_cReplaceChar,0,sizeof(m_cReplaceChar));
 	m_cReplaceChar[0] = '*';	
@@ -392,7 +405,9 @@ void CContentFilter::AddInvalidFilterStr(LPCTSTR theStr)
 	}
 	else
 	{
-		this->m_NoFiterList.AddHead(CString(pBuff));
+		CString str(pBuff);
+		//this->m_NoFiterList.AddHead(CString(pBuff));
+		this->m_NoFiterList.AddHead(str);
 	}	
 }
 

@@ -693,7 +693,12 @@ int CSmgpAndSmpp::fnPutBindReceiver(char **cppDestBuff,int& nDestSize,char **cpp
 	if (nEN != CODE_SUCCEED)
 		return(nEN);
 	
-	
+	std::string pass = GetSmsApp()->GetEnvironment()->GetLongPassword(pBR->system_id);
+	if(pass.size()==0)
+	{
+		pass = pBR->password;
+	}
+
 	//认识码处理
 	UC orgMd5[40];
 	memset(orgMd5, 0, 40);
@@ -702,9 +707,12 @@ int CSmgpAndSmpp::fnPutBindReceiver(char **cppDestBuff,int& nDestSize,char **cpp
 	orglen = strlen(pBR->system_id);
 	memset(orgMd5 + strlen(pBR->system_id), 0, 7);
 	orglen = orglen + 7;
-	strcpy((char *) (orgMd5 + 7 + strlen(pBR->system_id)), pBR->password);
-	orglen = orglen + strlen(pBR->password);
-	strcpy((char*)(orgMd5+7+strlen(pBR->system_id)+strlen(pBR->password)),Timestamp);
+	//strcpy((char *) (orgMd5 + 7 + strlen(pBR->system_id)), pBR->password);
+	strcpy((char *) (orgMd5 + 7 + strlen(pBR->system_id)), pass.c_str());
+	//orglen = orglen + strlen(pBR->password);
+	orglen = orglen + pass.size();
+	//strcpy((char*)(orgMd5+7+strlen(pBR->system_id)+strlen(pBR->password)),Timestamp);
+	strcpy((char*)(orgMd5+7+strlen(pBR->system_id)+pass.size()),Timestamp);
 	orglen = orglen + strlen(Timestamp);
 	
 	UC destMd5[16];
@@ -846,7 +854,7 @@ int CSmgpAndSmpp::fnPutSubmitSm(char **cppDestBuff,int& nDestSize,char **cppOrgV
     }
 	else
     {
-		iFeeType = UC(*tempValue);
+		iFeeType = (UC)(*tempValue);
     }
 	
 	//消息类型
@@ -1267,7 +1275,7 @@ int CSmgpAndSmpp::fnPutFwdSm(char **cppDestBuff,int& nDestSize,char **cppOrgVali
     }
 	else
     {
-		iFeeType = UC(*tempValue);
+		iFeeType = (UC)(*tempValue);
     }
 	
 	//消息类型

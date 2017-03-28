@@ -15,6 +15,10 @@ int  extern  G_APP_STATUS_REPORT_SUPPORT;
 
 //extern void WriteSysErrorLog(char *pStr);
 
+#define COPY_FROM_STRING(dest,str)	\
+	do{  if(str.size())strncpy(dest,str.data(),min(str.size(),sizeof(dest)-1));else dest[0]=0;}while(0)
+
+
 #include "SmppAndInnerTrans.h"
 
 //#define __DEBUG_SHORTMSG__
@@ -42,7 +46,7 @@ typedef struct tag_ShortMsg
 	//重发次数
 	int m_nReSubmitCount;
 	//是否是状态报告消息
-	UC m_IsReport;
+	//UC m_IsReport;
 	//消息结构
 	SM_STRUCT m_SMData;
 	//消息是否发送的标记
@@ -348,10 +352,10 @@ int CShortMsg::NewToStream( BYTE*& pbyStream, DWORD& dwLen)
 	out << m_ulCmdID;
 	out << m_SendCmdID;
 	out << m_nReSubmitCount;
-	out << m_IsReport;
+	//out << m_IsReport;
 	out << m_SendMsgFlag;
 
-	out << m_bFromHttp ;
+	//out << m_bFromHttp ;
 	out << m_bSndToFee ;
 	out << m_sendorgaddr ;
 	out << m_sourceipaddr ;
@@ -397,9 +401,12 @@ int CShortMsg::NewToStream( BYTE*& pbyStream, DWORD& dwLen)
 int CShortMsg::NewFromStream( const BYTE* pbyStream, const DWORD& dwLen)
 {
 	lit_stream in((char*)pbyStream,dwLen,1);
-	in >> char_ptr_in(m_CalledNo,sizeof(m_CalledNo));
-	in >> char_ptr_in(m_CallingNo,sizeof(m_CallingNo));
-	in >> char_ptr_in(m_FeeCallNo,sizeof(m_FeeCallNo));
+	char_ptr_in in_CalledNo(m_CalledNo,sizeof(m_CalledNo));
+	in >> in_CalledNo;
+	char_ptr_in in_CallingNo(m_CallingNo,sizeof(m_CallingNo));
+	in >> in_CallingNo;
+	char_ptr_in in_FeeCallNo(m_FeeCallNo,sizeof(m_FeeCallNo));
+	in >> in_FeeCallNo;
 	in >> m_nSubmitTime;
 	in >> m_DealStep;
 	in >> m_ulSenderID;
@@ -408,10 +415,10 @@ int CShortMsg::NewFromStream( const BYTE* pbyStream, const DWORD& dwLen)
 	in >> m_ulCmdID;
 	in >> m_SendCmdID;
 	in >> m_nReSubmitCount;
-	in >> m_IsReport;
+	//in >> m_IsReport;
 	in >> m_SendMsgFlag;
 
-	in >> m_bFromHttp ;
+	//in >> m_bFromHttp ;
 	in >> m_bSndToFee ;
 	in >>m_sendorgaddr ;
 	in >>m_sourceipaddr ;
@@ -442,7 +449,8 @@ int CShortMsg::NewFromStream( const BYTE* pbyStream, const DWORD& dwLen)
 	if(m_pSMData == nullptr)
 		m_pSMData = new SM_STRUCT;
 	//in.streamin_block((char*)m_pSMData,sizeof(SM_STRUCT));
-	in >> char_ptr_in((char*)m_pSMData,sizeof(SM_STRUCT));
+	char_ptr_in in_pSMData((char*)m_pSMData,sizeof(SM_STRUCT));
+	in >> in_pSMData;
 	if(m_cTlv)
 		delete m_cTlv;
 	m_cTlv = new CTLV;
@@ -453,6 +461,154 @@ int CShortMsg::NewFromStream( const BYTE* pbyStream, const DWORD& dwLen)
 	return in.GetReadSize();
 }
 
+//add by wj
+CShortMsg::CShortMsg(sm::gw_shortmsg* pPB)
+{
+	m_pSMData = new SM_STRUCT; 
+	memset(m_pSMData, 0, sizeof(SM_STRUCT));
+	
+	//strncpy(m_pSMData->RcvMSISDN ,pPB->smdata().rcvaddr().data(),min(sizeof(m_pSMData->RcvMSISDN)-1,pPB->smdata().rcvaddr().size()));
+	COPY_FROM_STRING(m_pSMData->RcvMSISDN,pPB->smdata().rcvaddr());
+	m_pSMData->RcvTon = pPB->smdata().rcvton();
+	m_pSMData->RcvNpi = pPB->smdata().rcvnpi();
+	//strncpy(m_pSMData->SndMSISDN ,pPB->smdata().sndaddr().data(),sizeof(m_pSMData->SndMSISDN)-1);
+	COPY_FROM_STRING(m_pSMData->SndMSISDN,pPB->smdata().sndaddr());
+	m_pSMData->SndTon = pPB->smdata().sndton();
+	m_pSMData->SndNpi = pPB->smdata().sndnpi();
+	m_pSMData->DCS = pPB->smdata().dcs();
+	m_pSMData->pid = pPB->smdata().pid();
+	m_pSMData->pri = pPB->smdata().pri();
+	m_pSMData->EmsClass = pPB->smdata().ems_class();
+	//strncpy(m_pSMData->ExpireTime,pPB->smdata().expiretime().c_str(),sizeof(m_pSMData->ExpireTime)-1);
+	COPY_FROM_STRING(m_pSMData->ExpireTime,pPB->smdata().expiretime());
+	//strncpy(m_pSMData->ScheduleTime,pPB->smdata().scheduletime().c_str(),sizeof(m_pSMData->ScheduleTime)-1);
+	COPY_FROM_STRING(m_pSMData->ScheduleTime,pPB->smdata().scheduletime());	
+	m_pSMData->SMLength = (std::min)((int)pPB->smdata().content().size(),(int)sizeof(m_pSMData->SMUD)-1);
+	memcpy(m_pSMData->SMUD,pPB->smdata().scheduletime().data(),m_pSMData->SMLength);
+	m_pSMData->ReportType = pPB->smdata().reporttype();
+
+	this->m_bReturnFrist = pPB->reply_end();
+	//strncpy(m_CalledNo,pPB->org_destaddr().data(),sizeof(m_CalledNo));
+	COPY_FROM_STRING(m_CalledNo,pPB->org_destaddr());
+	COPY_FROM_STRING(m_CallingNo,pPB->org_orgaddr());
+	COPY_FROM_STRING(m_FeeCallNo,pPB->org_feeaddr());
+	m_orgservicecode = pPB->org_servicecode();
+	m_orgspcode = pPB->org_spcode();
+	m_senddestaddr = pPB->dst_destaddr();
+	m_sendorgaddr = pPB->dst_orgaddr();
+	m_sendsevicecode = pPB->dst_servicecode();
+	m_sendspcode = pPB->dst_spcode();
+	m_DealStep = pPB->step();
+	m_nReSubmitCount = pPB->snd_count();
+	m_SendMsgFlag = pPB->snd_flag();
+	m_SendCmdID = pPB->snd_cmd();
+	m_ulCmdID = pPB->cmd();
+	m_nSubmitTime = pPB->submit_time();
+
+	m_cTlv = new CTLV;
+	if(pPB->tlvs().size())
+	{	
+	
+		for(int i = 0;i<pPB->tlvs().size();i++)
+		{
+			auto& tr = pPB->tlvs(i);
+			m_cTlv->AddItem(tr.tlv_type(),tr.bvalue().size(),(BYTE*)tr.bvalue().data());
+		}
+		VLOG(5)<<"CShortMsg(sm::gw_shortmsg*) tlv count="<<pPB->tlvs().size();
+	}
+
+	if(pPB->lsm_case()==pPB->kSupersms)
+	{
+		auto& lsm = pPB->supersms();
+		
+		this->m_wlongmsg.resize(lsm.longcontent().size()/2);
+
+		memcpy(&m_wlongmsg[0],lsm.longcontent().data(),lsm.longcontent().size());
+
+		VLOG(5)<<"CShortMsg(sm::gw_shortmsg*) longsm len="<<lsm.longcontent().size();
+
+		for(int i=0;i<lsm.subids().size();i++)
+		{
+			auto& id = lsm.subids(i);
+
+			assert(id.length()>0);
+			this->m_msgidlist.push_back(std::move(id));
+		}
+		VLOG(5)<<"CShortMsg(sm::gw_shortmsg*) subsm count="<<lsm.subids().size();
+
+	}
+
+}
+
+sm::gw_shortmsg CShortMsg::GetPBPack()
+{
+	sm::gw_shortmsg pb;
+	if(this->m_pSMData)
+	{
+		auto psm_data = pb.mutable_smdata();
+		psm_data->set_rcvaddr(m_pSMData->RcvMSISDN,strnlen(m_pSMData->RcvMSISDN,sizeof(m_pSMData->RcvMSISDN)-1));
+		psm_data->set_rcvnpi(m_pSMData->RcvNpi);
+		psm_data->set_rcvton(m_pSMData->RcvTon);
+		psm_data->set_sndaddr(m_pSMData->SndMSISDN,strnlen(m_pSMData->SndMSISDN,sizeof(m_pSMData->SndMSISDN)-1));
+		psm_data->set_sndnpi(m_pSMData->SndNpi);
+		psm_data->set_sndton(m_pSMData->SndTon);
+		psm_data->set_ems_class(m_pSMData->EmsClass);
+		psm_data->set_pid(m_pSMData->pid);
+		psm_data->set_pri(m_pSMData->pri);
+		psm_data->set_dcs(m_pSMData->DCS);
+		psm_data->set_expiretime(m_pSMData->ExpireTime,strnlen(m_pSMData->ExpireTime,sizeof(m_pSMData->ExpireTime)-1));
+		psm_data->set_scheduletime(m_pSMData->ScheduleTime,strnlen(m_pSMData->ScheduleTime,sizeof(m_pSMData->ScheduleTime)-1));
+		psm_data->set_reporttype(m_pSMData->ReportType);
+		psm_data->set_content(m_pSMData->SMUD,m_pSMData->SMLength);
+	}
+
+
+	pb.set_reply_end(m_bReturnFrist);
+	pb.set_org_orgaddr(m_CalledNo,strnlen(m_CalledNo,sizeof(m_CalledNo)-1));
+	pb.set_org_orgaddr(m_CallingNo,strnlen(m_CallingNo,sizeof(m_CallingNo)-1));
+	pb.set_org_orgaddr(m_FeeCallNo,strnlen(m_FeeCallNo,sizeof(m_FeeCallNo)-1));
+	pb.set_org_servicecode(m_orgservicecode);
+	pb.set_org_spcode(m_orgspcode);
+	pb.set_dst_destaddr(m_senddestaddr);
+	pb.set_dst_orgaddr(m_sendorgaddr);
+	pb.set_dst_servicecode(m_sendsevicecode);
+	pb.set_dst_spcode(m_sendsevicecode);
+	pb.set_dst_spcode(m_sendspcode);
+	pb.set_step(m_DealStep);
+	pb.set_cmd(m_ulCmdID);
+	pb.set_snd_cmd(m_SendCmdID);
+	pb.set_snd_flag(m_SendMsgFlag);
+	pb.set_submit_time(m_nSubmitTime);
+	pb.set_snd_count(m_nReSubmitCount);
+
+	if(m_cTlv)
+	{
+		for(int i =0;i<m_cTlv->GetCount();i++)
+		{
+			auto& pair = m_cTlv->GetTlv(i);
+			if(pair.second.size())
+			{
+				auto p = pb.add_tlvs();
+				p->set_tlv_type(pair.first);
+				p->set_bvalue(pair.second);
+			}
+		}
+		//pb.ConsumedEntireMessage();
+	}
+	if(m_wlongmsg.size()>0)
+	{
+		auto plsm = pb.mutable_supersms();
+		plsm->set_longcontent(m_wlongmsg.data(),m_wlongmsg.size()*2);
+		for(auto itr = m_msgidlist.begin();itr!= m_msgidlist.end();itr++)
+		{
+			plsm->add_subids(*itr);
+		}
+	}
+	return std::move(pb);
+}
+
+
+
 
 CShortMsg::CShortMsg()
 {	
@@ -461,7 +617,7 @@ CShortMsg::CShortMsg()
 	m_cTlv = NULL;
 	m_DealStep = 0;
 	memset(m_FeeCallNo, 0, sizeof(m_FeeCallNo));
-	m_IsReport = 0;
+	//m_IsReport = 0;
 	m_nReSubmitCount = 0;
 	m_nSubmitTime = GetTickCount();
 	
@@ -474,7 +630,7 @@ CShortMsg::CShortMsg()
 	m_ulRecverID = 0;
 	m_ulSenderID = 0;
 	m_ulSequenceID = 0;
-	m_bFromHttp = false;
+	//m_bFromHttp = false;
 	m_bReturnFrist = false;
 	m_bSndToFee = false;
 	m_bTransferInner = false;
@@ -501,7 +657,7 @@ CShortMsg::CShortMsg(LPVOID pMsg)
 	m_cTlv = NULL;
 	m_DealStep = 0;
 	memset(m_FeeCallNo, 0, sizeof(m_FeeCallNo));
-	m_IsReport = 0;
+	//m_IsReport = 0;
 	m_nReSubmitCount = 0;
 	m_nSubmitTime = GetTickCount();;
 
@@ -514,7 +670,7 @@ CShortMsg::CShortMsg(LPVOID pMsg)
 	m_ulRecverID = 0;
 	m_ulSenderID = 0;
 	m_ulSequenceID = 0;	
-	m_bFromHttp = false;
+	//m_bFromHttp = false;
 	m_bReturnFrist = false;
 	m_bSndToFee = false;
 	m_bTransferInner = false;
@@ -577,10 +733,10 @@ CShortMsg::CShortMsg(LPVOID pMsg)
 					m_pSMData->SndTon = pSmppSub->source_addr_ton;
 					strcpy(m_pSMData->SndMSISDN,pSmppSub->source_addr);
 					
-					if (pSmppSub->esm_class & ESM_CLASS_STATUS_REPORT)
+					/*if (pSmppSub->esm_class & ESM_CLASS_STATUS_REPORT)
 					{
 						m_IsReport=1;
-					}
+					}*/
 					
 					m_pSMData->EmsClass = pSmppSub->esm_class;
 					m_pSMData->pid = pSmppSub->protocol_ID;
@@ -859,7 +1015,7 @@ CShortMsg::CShortMsg(LPVOID pMsg)
 			memset(buf, 0, sizeof(buf));
 			memcpy(buf, pSM->DoneTime, sizeof(pSM->DoneTime));			
 			tmp = buf;
-			time.Format("%s/%s/%s %s:%s:%s", tmp.Left(4), tmp.Mid(4,2), tmp.Mid(6,2), tmp.Mid(8,2), tmp.Mid(10,2), tmp.Right(2));
+			time.Format("%s/%s/%s %s:%s:%s", (LPCTSTR)tmp.Left(4), (LPCTSTR)tmp.Mid(4,2), (LPCTSTR)tmp.Mid(6,2), (LPCTSTR)tmp.Mid(8,2), (LPCTSTR)tmp.Mid(10,2), (LPCTSTR)tmp.Right(2));
 			
 			COleVariant varTime(time);
 			COleDateTime tmTime(varTime);
@@ -922,7 +1078,7 @@ CShortMsg::CShortMsg(LPVOID pMsg)
 			memset(buf, 0, sizeof(buf));
 			memcpy(buf, pSM->SubmitTime, sizeof(pSM->SubmitTime));
 			tmp = buf;
-			time.Format("%s/%s/%s %s:%s:%s", tmp.Left(4), tmp.Mid(4,2), tmp.Mid(6,2), tmp.Mid(8,2), tmp.Mid(10,2), tmp.Right(2));
+			time.Format("%s/%s/%s %s:%s:%s", (LPCTSTR)tmp.Left(4), (LPCTSTR)tmp.Mid(4,2), (LPCTSTR)tmp.Mid(6,2), (LPCTSTR)tmp.Mid(8,2), (LPCTSTR)tmp.Mid(10,2), (LPCTSTR)tmp.Right(2));
 
 			varTime = COleVariant(time);
 			tmTime = COleDateTime(varTime);
@@ -980,7 +1136,7 @@ CShortMsg::CShortMsg(const CShortMsg * sm)
 	memset(m_FeeCallNo, 0, sizeof(m_FeeCallNo));
 	strncpy(m_FeeCallNo, sm->m_FeeCallNo, sizeof(m_FeeCallNo) - 1);
 
-	m_IsReport = sm->m_IsReport;
+	//m_IsReport = sm->m_IsReport;
 	m_nReSubmitCount = sm->m_nReSubmitCount;
 	m_nSubmitTime = sm->m_nSubmitTime;
 
@@ -999,7 +1155,7 @@ CShortMsg::CShortMsg(const CShortMsg * sm)
 	m_ulRecverID = sm->m_ulRecverID;
 	m_ulSenderID = sm->m_ulSenderID;
 	m_ulSequenceID = sm->m_ulSequenceID;	
-	m_bFromHttp = sm->m_bFromHttp;
+	//m_bFromHttp = sm->m_bFromHttp;
 	m_bSndToFee =sm-> m_bSndToFee;
 	m_sendorgaddr = sm->m_sendorgaddr;
 	m_sourceipaddr = sm->m_sourceipaddr;
@@ -1042,7 +1198,7 @@ CShortMsg::~CShortMsg()
 
 
 //获取消息包
-int CShortMsg::GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize)
+int CShortMsg::GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize,bool bInner)
 {
 	if(m_pSMData == NULL)
 		return FALSE;
@@ -1062,16 +1218,26 @@ int CShortMsg::GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize)
 			memset(pExtData, 0, sizeof(pExtData));
 			DWORD nExtDataSize = 0;
 
-			if(SMS_AUTHPRICEREQ==m_SendCmdID && m_bFromHttp && m_msgidlist.size())
+			//if(SMS_AUTHPRICEREQ==m_SendCmdID && m_bFromHttp && m_msgidlist.size())
+			//if(SMS_AUTHPRICEREQ==m_SendCmdID && m_bFromHttp)
+			if(SMS_AUTHPRICEREQ==m_SendCmdID)
 			{
-				CTLV tlv(*m_cTlv);
-				tlv.AddLongIntItem(Tag_Ex_HttpMsgCount,m_msgidlist.size()+1);
-				CCodeAndDecode code;
-				std::wstring nlmsg = code.ConvertWStringToNWString(this->m_wlongmsg); 
-				tlv.AddItem(Tag_Ex_HttpLongMsg,nlmsg.size()*2,(BYTE*)&nlmsg[0]);
-				tlv.ToStream((BYTE*)pExtData, nExtDataSize);
+				if(GetSubMsgCount())
+				{
+					CTLV tlv(*m_cTlv);
+					//tlv.AddLongIntItem(Tag_Ex_HttpMsgCount,m_msgidlist.size()+1);
+					tlv.AddLongIntItem(Tag_Ex_HttpMsgCount,GetSubMsgCount());
+					CCodeAndDecode code;
+					//std::wstring nlmsg = code.ConvertWStringToNWString(this->m_wlongmsg);				
+					std::wstring nlmsg = GetAllContentNW(); 
+					VLOG(5)<<"send long content to auth ["<<code.ConvertWStringToString(code.ConvertNWStringToWString(nlmsg))<<"]"
+						<<"; Tag_Ex_HttpMsgCount=["<<GetSubMsgCount()<<"]";
+					tlv.AddItem(Tag_Ex_HttpLongMsg,nlmsg.size()*2,(BYTE*)&nlmsg[0]);
+					tlv.ToStream((BYTE*)pExtData, nExtDataSize);
+				}
 			}
-			else if(m_SendCmdID == SMS_DELIVER_ADDR && this->m_bSndToFee == true)//发送话单消息
+			//else if(m_SendCmdID == SMS_DELIVER_ADDR && this->m_bSndToFee == true)//发送话单消息
+			else if(m_SendCmdID == SMS_DELIVER_ADDR && bInner == true)//发送话单消息
 			{
 				CTLV tlv(*m_cTlv);
 				tlv.SetLongIntItem(Tag_Ex_SourceCodeType,m_sourcecodetype);
@@ -1124,7 +1290,8 @@ int CShortMsg::GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize)
 				APP_DEBUG_LOG((LPCTSTR)s);				
 				APP_END_LOG;
 			}
-			else if(this->m_bTransferInner)
+			//else if(this->m_bTransferInner)
+			else if(bInner)
 			{
 				CTLV tlv(*m_cTlv);
 				
@@ -1596,7 +1763,7 @@ int CShortMsg::GetPaymntRequestPacket(tagSmsPaymntRequest* pMsg,int nMsgSize)
 			CString tmp = this->GetDlrTime();
 			if(!tmp.IsEmpty())
 			{
-				time.Format("%s%s%s%s%s%s", tmp.Left(4), tmp.Mid(5,2), tmp.Mid(8,2), tmp.Mid(11,2), tmp.Mid(14,2), tmp.Right(2));
+				time.Format("%s%s%s%s%s%s", (LPCTSTR)tmp.Left(4), (LPCTSTR)tmp.Mid(5,2), (LPCTSTR)tmp.Mid(8,2), (LPCTSTR)tmp.Mid(11,2), (LPCTSTR)tmp.Mid(14,2), (LPCTSTR)tmp.Right(2));
 			}
 			else
 			{
@@ -1608,7 +1775,7 @@ int CShortMsg::GetPaymntRequestPacket(tagSmsPaymntRequest* pMsg,int nMsgSize)
 			tmp = this->GetSubTime();
 			if(!tmp.IsEmpty())
 			{
-				time.Format("%s%s%s%s%s%s", tmp.Left(4), tmp.Mid(5,2), tmp.Mid(8,2), tmp.Mid(11,2), tmp.Mid(14,2), tmp.Right(2));
+				time.Format("%s%s%s%s%s%s", (LPCTSTR)tmp.Left(4), (LPCTSTR)tmp.Mid(5,2), (LPCTSTR)tmp.Mid(8,2), (LPCTSTR)tmp.Mid(11,2), (LPCTSTR)tmp.Mid(14,2), (LPCTSTR)tmp.Right(2));
 			}
 			else
 			{
@@ -3190,6 +3357,80 @@ char* CShortMsg::GetAuthPriceID()
 		return 0;
 }
 
+int CShortMsg::AddSign(int head,const char* psign ,int len)
+{
+	if(len==0)
+	{
+		VLOG(5)<<"AddSign len==0 pass";
+		return 0;
+	}
+	if(m_wlongmsg.size())//httpmsg
+	{
+		CCodeAndDecode code;
+		std::wstring wzSign = code.ConvertStringToWString(std::string(psign,len));
+		if(head==0)
+		{
+			VLOG(5)<<"AddSign http msg at tail";
+			m_wlongmsg+=wzSign;
+		}
+		else
+		{
+			VLOG(5)<<"AddSign http msg at head";
+			m_wlongmsg = m_wlongmsg+wzSign;
+		}
+		return 0;
+	}
+	else
+	{
+			BYTE dcs = GetMsgFormat();
+			int hlen = 0;
+			if(GetSMData()->EmsClass&ESM_CLASS_UDHI)
+			{
+				hlen = GetMsgContent()[0]+1;//sm head len ,first char is head payload len ,so total head len is char[0] +1;
+				VLOG(5)<<"AddSign  msg  head len "<< hlen;
+			}
+			if(hlen>140)
+			{
+				LOG(ERROR)<<"error sm header head len > 140  "<< hlen;
+				return -1;
+			}
+			VLOG(8)<<"AddSign   dcs "<<std::hex<<(int)dcs;
+			std::vector<char> vsign(psign,psign+len);
+			if((dcs&0x0C)==8)
+			{//unicode
+				CCodeAndDecode code;
+				std::wstring wzSign = code.ConvertStringToWString(std::string(psign,len));
+				std::wstring nwzSign = code.ConvertWStringToNWString(wzSign);				
+				vsign.resize(nwzSign.size()*2);
+				memcpy(&vsign[0],&nwzSign[0],vsign.size());
+			}
+			if(hlen + vsign.size()>140)
+			{
+				LOG(ERROR)<<"error sm header head len+signlen  > 140  ["<< hlen<<"][" <<vsign.size()<<"]" ;
+				return -2;
+			}
+
+			if(head==0)
+			{
+				int smlen = GetSMLength();
+				VLOG(5)<<"shortmsg add tail sign start at "<<smlen << "; len ="<<min(vsign.size(),140-smlen);				
+				memcpy(GetMsgContent()+smlen,&vsign[0],min(vsign.size(),140-smlen));
+				m_pSMData->SMLength = min(vsign.size()+smlen,140);
+			}
+			else
+			{
+				int smlen = GetSMLength();
+				VLOG(5)<<"shortmsg add head sign move start at "<<hlen<< "; to "<<hlen+vsign.size() <<"; len ="<<min(140-hlen-vsign.size(),smlen-hlen);
+				memmove(GetMsgContent()+hlen+vsign.size(),GetMsgContent()+hlen,min(140-hlen-vsign.size(),smlen-hlen));
+				memcpy(GetMsgContent()+hlen,&vsign[0],vsign.size());
+				m_pSMData->SMLength = min(smlen+vsign.size(),140);
+			}
+			VLOG(5)<<"shortmsg add head sign total len="<<m_pSMData->SMLength;
+			
+	}
+	return 0;
+}
+
 
 // 设置定购处理中鉴权模块产生的鉴权ID
 bool CShortMsg::SetAuthPriceID(char* AuthPriceID)
@@ -3519,7 +3760,7 @@ BOOL CShortMsg::ToStream( BYTE*& pbyStream, DWORD& dwLen)
 		
 		pShortMsg->m_DealStep = m_DealStep;
 		strncpy(pShortMsg->m_FeeCallNo, m_FeeCallNo, sizeof(pShortMsg->m_FeeCallNo) - 1);
-		pShortMsg->m_IsReport = m_IsReport;
+		//pShortMsg->m_IsReport = m_IsReport;
 		pShortMsg->m_nReSubmitCount = m_nReSubmitCount;
 		pShortMsg->m_nSubmitTime = m_nSubmitTime;
 		
@@ -3600,7 +3841,7 @@ BOOL CShortMsg::FromStream( const BYTE* pbyStream, const DWORD& dwLen)
 		memset(m_FeeCallNo, 0, sizeof(m_FeeCallNo));
 		strncpy(m_FeeCallNo, pShortMsg->m_FeeCallNo, sizeof(m_FeeCallNo) - 1);
 		step++;
-		m_IsReport = pShortMsg->m_IsReport;
+		//m_IsReport = pShortMsg->m_IsReport;
 		m_nReSubmitCount = pShortMsg->m_nReSubmitCount;
 		m_nSubmitTime = pShortMsg->m_nSubmitTime;
 		step++;
@@ -4040,4 +4281,64 @@ void CShortMsg::Test()
 	ASSERT(GetReslutNotifyCode() == 23);
 	ASSERT(strcmp(GetCPID(),"CPID123456")==0);
 		
+}
+
+
+void CShortMsg::GetLongSM_Info(std::string& key /*key identity the long SM*/,
+							    int& total_count/*total items in the SM*/,
+								int& item_index/*items index*/)
+{
+	total_count = 0;
+	item_index = 0;
+	if(!m_pSMData)
+		return ;
+	if(m_pSMData->SMUD[1]!=0)//no long msg header indicator
+		return ;
+
+	if(m_pSMData->SMUD[2]!=3)//erro long msg head len ,must be 3 
+		return ;
+	//m_pSMData[3];// msg ref
+
+	total_count = m_pSMData->SMUD[4];// msg total count
+	item_index = m_pSMData->SMUD[5];//msg index
+	key.clear();
+
+	key+=GetDestAddr();
+	key+="@";
+	key+=GetOrgAddr();
+	key+="@";
+	key+=std::to_string((long long)m_pSMData->SMUD[3]);
+	return ;
+	//m_pSMData[5];// msg index
+	
+}
+
+bool CShortMsg::IsLongSM_Item()
+{
+
+	if(!m_pSMData)
+		return false;
+	char* pMsgSt = m_pSMData->SMUD;
+
+	if(m_pSMData->EmsClass&ESM_CLASS_UDHI)
+	{
+		BYTE len = *(BYTE*)m_pSMData->SMUD+1;//get header len; "+1" include the headlen one byte
+		if(len < m_pSMData->SMLength //total len shound > head len
+			&& pMsgSt[1] == 0x00 //first byte "0x00" indicator longmsgtype 
+			)
+			return TRUE;
+	}
+
+	//it's possible not set UDHI 
+	if (
+		 m_pSMData->SMLength > 5 &&
+		(pMsgSt[0] >= 5) &&
+		(pMsgSt[1] == 0x00) &&
+		(pMsgSt[2] == 3) //longmsg header len
+		)
+	{
+		return TRUE;
+	}
+
+	return FALSE;
 }

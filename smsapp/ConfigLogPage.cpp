@@ -44,10 +44,10 @@ void CConfigLogPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CConfigLogPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CConfigLogPage)
-	ON_BN_CLICKED(IDC_REPORTLOGCHECK, OnReportlogcheck)
-	ON_BN_CLICKED(IDC_SAVECONFIG, OnSaveconfig)
-	ON_CBN_SELCHANGE(IDC_LOGLEVEL, OnSelchangeLoglevel)
-	ON_EN_CHANGE(IDC_REPORTLOGACCNT, OnChangeReportlogaccnt)
+	ON_BN_CLICKED(IDC_REPORTLOGCHECK, &CConfigLogPage::OnReportlogcheck)
+	ON_BN_CLICKED(IDC_SAVECONFIG, &CConfigLogPage::OnSaveconfig)
+	ON_CBN_SELCHANGE(IDC_LOGLEVEL, &CConfigLogPage::OnSelchangeLoglevel)
+	ON_EN_CHANGE(IDC_REPORTLOGACCNT, &CConfigLogPage::OnChangeReportlogaccnt)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

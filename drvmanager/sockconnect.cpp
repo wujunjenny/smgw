@@ -142,7 +142,9 @@ TRYAGAIN:
 			{//如果可写则表示连接成功
 				if(FD_ISSET(s,&writefd))
 				{
+					VLOG(5)<<"CSockConnect::Connect ["<<std::dec<<(int)s<<"] old_handle["<<(int)m_hFile<<"]["<<(int)m_hDrvObject<<"]";
 					m_hFile=(HANDLE)s;
+					s = INVALID_SOCKET;//clear s
                     LINGER  TcpLinger;
                     int iRet = 0;    
                     TcpLinger.l_onoff  = 1;
@@ -154,7 +156,9 @@ TRYAGAIN:
 	                {	
    //                     ASSERT(0);
 		                int er;
-		                er=WSAGetLastError();        
+		                er=WSAGetLastError();
+						LOG(ERROR)<<"connect setsockopt err s=["<<std::dec<<(int)m_hFile<<"]"<<"["<<er<<"]";
+						StackTrace(5);
                     }
                     //end add                   
 					return TRUE;
@@ -166,8 +170,10 @@ TRYAGAIN:
 
 		}
 	}
-
-	closesocket(s);
+	VLOG(5)<<"closesocket ["<<std::dec<<(int)s<<"]""["<<(int)m_hDrvObject<<"]";
+	if(s!=-1)
+		closesocket(s);
+	m_hFile = (HANDLE)INVALID_SOCKET;
 	return FALSE;
 }
 
@@ -461,7 +467,11 @@ int CSockConnect::CloseSocketSafe()
 {
 
     m_iState = STATUS_BROKEN;
-
+	if((int)m_hFile == INVALID_SOCKET)
+	{
+		//socket has been closed;
+		return 0;
+	}
     LINGER  TcpLinger;
     int iRet = 0;
 
@@ -474,7 +484,16 @@ int CSockConnect::CloseSocketSafe()
     if(iRet == SOCKET_ERROR)
 	{	
 		int er;
-		er=WSAGetLastError();        
+		er=WSAGetLastError();
+		if(er == WSAENOTSOCK)
+		{
+			//not a valid socket,can't close
+
+			LOG(ERROR)<<"closesocket error ["<<std::dec<<(int)m_hFile<<"] ["<< (int)m_hDrvObject <<"]";
+			StackTrace(5);
+
+			m_hFile = (HANDLE)INVALID_SOCKET;
+		}
 //        ASSERT(0);
     }
 	
@@ -486,15 +505,20 @@ int CSockConnect::CloseSocketSafe()
 //       ASSERT(0);
     }
 
+	if(m_hFile!=(HANDLE)INVALID_SOCKET)
+	{
+		VLOG(5)<<"closesocket ["<<std::dec<<(int)m_hFile<<"]""["<<(int)m_hDrvObject<<"]";
+		//google::StackTrace(5);
 
-    iRet = closesocket((int)m_hFile);
-	if(iRet==SOCKET_ERROR)
-	{		
-		int er;
-		er=WSAGetLastError();		
-//        ASSERT(0);
-    }
-
+		iRet = closesocket((int)m_hFile);
+		if(iRet==SOCKET_ERROR)
+		{		
+			int er;
+			er=WSAGetLastError();		
+		//        ASSERT(0);
+		}
+	}
+	m_hFile = (HANDLE)INVALID_SOCKET;
     return 0;
 }
 

@@ -161,6 +161,7 @@ BOOL CSockServer::CloseSocket()
     }
 
     //end add
+	VLOG(5)<<"closesocket ["<<std::dec<<(int)m_socket<<"]";
 	closesocket(m_socket);
 	m_socket=INVALID_SOCKET;
 	return TRUE;	

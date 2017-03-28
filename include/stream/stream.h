@@ -14,7 +14,9 @@
 #define __MAX_DATA		__PAGE_SIZE-__START_BASE-200
 
 
-
+#ifdef _WIN64
+#pragma pack(push,8)
+#endif
 typedef struct _LOCKDATABUFF
 {
 	int datalen;
@@ -22,6 +24,9 @@ typedef struct _LOCKDATABUFF
 
 } LOCKDATABUFF, * LPLOCKDATABUFF;
 
+#ifdef _WIN64
+#pragma pack(pop)
+#endif
 
 
 #define IMEM_READ_OK		0

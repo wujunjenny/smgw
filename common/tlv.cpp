@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include <string.h>
 //#include <winsock2.h>
+#include "log.h"
 #include "tlv.h"
 
+namespace old_tlv {
 
 CTLV::CTLV() : m_pSTLV(NULL)
 {
@@ -352,4 +354,16 @@ bool CTLV::SetLongIntItem(DWORD dwTag, const long int bstrValue)
 	return true;
 }
 
+
+};
 //***SMGW40-01, 2004-12-23, jdz, modi end***//
+
+
+
+namespace tlv
+{
+
+		
+	std::pair<unsigned short,std::string> CTLV::default_v(0,"");
+
+};

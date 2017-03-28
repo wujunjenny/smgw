@@ -92,7 +92,7 @@ void CAckError::Add(int ntype, CString sError,CString sTimes)
 	m_Count[ntype]++;
 	if ( ntype==1 )
 	{
-	    sNewString.Format("%s,%s",sError,sTimes);
+	    sNewString.Format("%s,%s",(LPCTSTR)sError,(LPCTSTR)sTimes);
         m_CorStr[ntype]=m_CorStr[ntype]+sNewString;
         m_CorStr[ntype]=m_CorStr[ntype]+"|";
 		sKey.Format("code%d",m_Count[ntype]-1);
@@ -104,7 +104,7 @@ void CAckError::Add(int ntype, CString sError,CString sTimes)
 	
 	else if (ntype==0)
 	{
-        sNewString.Format("%s",sError);
+        sNewString.Format("%s",(LPCTSTR)sError);
         m_CorStr[ntype]=m_CorStr[ntype]+sNewString;
         m_CorStr[ntype]=m_CorStr[ntype]+"|";
         sKey.Format("code%d",m_Count[ntype]-1);
@@ -117,7 +117,7 @@ void CAckError::Add(int ntype, CString sError,CString sTimes)
 	else if (ntype==2)
 	{
 
-		sNewString.Format("%s",sError);
+		sNewString.Format("%s",(LPCTSTR)sError);
         m_CorStr[ntype]=m_CorStr[ntype]+sNewString;
         m_CorStr[ntype]=m_CorStr[ntype]+"|";
         sKey.Format("code%d",m_Count[ntype]-1);
@@ -145,7 +145,7 @@ void CAckError::Del(int ntype, CString sError,CString sTimes)
 	m_Count[ntype]--;
 	if ( ntype==1 )
 	{
-	    sNewString.Format("%s,%s|",sError,sTimes);
+	    sNewString.Format("%s,%s|",(LPCTSTR)sError,(LPCTSTR)sTimes);
         
 		// chang by jdz 2004.03.26
         //m_CorStr[ntype].Replace(sNewString,"");	存在BUG,如当m_CorStr[ntype]是"1288,3|8,3|"
@@ -155,7 +155,7 @@ void CAckError::Del(int ntype, CString sError,CString sTimes)
 		else
 		{
 			//位于中间
-			sNewString.Format("|%s,%s|",sError,sTimes);
+			sNewString.Format("|%s,%s|",(LPCTSTR)sError,(LPCTSTR)sTimes);
 			m_CorStr[ntype].Replace(sNewString,"|");
 		}
 		//end chang
@@ -192,7 +192,7 @@ void CAckError::Del(int ntype, CString sError,CString sTimes)
 	
 	else if (ntype==0)
 	{
-        sNewString.Format("%s|",sError);
+        sNewString.Format("%s|",(LPCTSTR)sError);
         m_CorStr[ntype].Replace(sNewString,"");
 	
 /*		
@@ -222,7 +222,7 @@ void CAckError::Del(int ntype, CString sError,CString sTimes)
 	else if (ntype==2)
 	{
 
-		sNewString.Format("%s|",sError);
+		sNewString.Format("%s|",(LPCTSTR)sError);
         m_CorStr[ntype].Replace(sNewString,"");
         
 

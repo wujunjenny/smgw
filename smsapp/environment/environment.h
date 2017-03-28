@@ -721,10 +721,13 @@ public:
 
 	DWORD m_bWriteReportLog;
 	CString WriteReportAccountName;
-
-
+	// add by wj
+	int m_nLSM_timeout;// second
 	
 public:
+	// add by wj
+	int GetLSMTimeout() { return m_nLSM_timeout;};
+	void SetLSMTimeout(int t){ m_nLSM_timeout=t; };
 	int GetSaveSubmitNumTime();
 	int GetShakeHandTime();
 	int GetWaitAckOutTime();

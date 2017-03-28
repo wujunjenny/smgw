@@ -42,9 +42,9 @@ void CAccountFlowDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAccountFlowDlg, CDialog)
 	//{{AFX_MSG_MAP(CAccountFlowDlg)
-	ON_BN_CLICKED(IDREFRESH, OnRefresh)
-	ON_BN_CLICKED(IDC_CLEAR, OnClear)
-	ON_BN_CLICKED(IDC_DESTADDR, OnDestaddr)
+	ON_BN_CLICKED(IDREFRESH, &CAccountFlowDlg::OnRefresh)
+	ON_BN_CLICKED(IDC_CLEAR, &CAccountFlowDlg::OnClear)
+	ON_BN_CLICKED(IDC_DESTADDR, &CAccountFlowDlg::OnDestaddr)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

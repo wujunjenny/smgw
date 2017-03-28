@@ -75,6 +75,10 @@ CConnPoint::CConnPoint(LPCTSTR lpszName, LPCTSTR lpszPassword)
 
 	m_dwMaxSendQueue = 500;
 	m_dwMaxWaitQueue = 1000 ;
+	
+	// add by wj
+	m_LSMtable.SetTimeOut(GetSmsApp()->GetEnvironment()->GetLSMTimeout());
+	VLOG(5)<<"LSM set timeout=" << m_LSMtable.GetTimeOut() <<"; name = " << GetName();
 }
 
 CConnPoint::CConnPoint()
@@ -116,7 +120,9 @@ CConnPoint::CConnPoint()
 	m_dwMaxSendQueue = 500 ;
 	m_dwMaxWaitQueue = 1000 ;
 
-	
+	// add by wj
+	m_LSMtable.SetTimeOut(GetSmsApp()->GetEnvironment()->GetLSMTimeout());
+	VLOG(5)<<"LSM set timeout=" << m_LSMtable.GetTimeOut() <<"; name = " << GetName();	
 }
 
 CConnPoint::~CConnPoint()

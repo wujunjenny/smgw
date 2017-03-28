@@ -8,12 +8,22 @@ CFilterDeal::CFilterDeal(void)
 	m_ForbitLevel=1;         //禁止的过滤单元的级别
 	m_InitFilterLevel=1;     //默认文件中的过滤单元级别
 	m_SplitStr=";LEVEL=";    //默认文件过滤单元中过滤词与等级数字之间的分割字串
-
-	m_NoFiterList.AddHead(CString(""));
-	m_NoFiterList.AddHead(CString("\r\n"));
-	m_NoFiterList.AddHead(CString(";"));
-	m_NoFiterList.AddHead(CString(","));
-	m_NoFiterList.AddHead(CString(" "));
+	CString str;
+	str ="";
+	//m_NoFiterList.AddHead(CString(""));
+	m_NoFiterList.AddHead(str);
+	str ="\r\n";
+	//m_NoFiterList.AddHead(CString("\r\n"));
+	m_NoFiterList.AddHead(str);
+	str =";";
+	//m_NoFiterList.AddHead(CString(";"));
+	m_NoFiterList.AddHead(str);
+	str =",";
+	//m_NoFiterList.AddHead(CString(","));
+	m_NoFiterList.AddHead(str);
+	str =" ";
+	//m_NoFiterList.AddHead(CString(" "));
+	m_NoFiterList.AddHead(str);
 	
 	RelaodFilterStr();       //从配置文件加载过滤表内容
 }
@@ -583,7 +593,8 @@ void CFilterDeal::AddInvalidFilterStr(LPCTSTR theStr)
 	}
 	else
 	{
-		this->m_NoFiterList.AddHead(CString(pBuff));
+		CString str(pBuff);
+		this->m_NoFiterList.AddHead(str);
 	}
 }
 

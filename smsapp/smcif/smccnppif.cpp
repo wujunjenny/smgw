@@ -935,7 +935,7 @@ void CSmcCNPPIF::OnBindAck(PTRMSG pMsg)
         }
         CString sStr;
         sStr.Format("帐号%s下的接口%d连接成功", \
-            sAccountName, GetIFID());
+            (LPCTSTR)sAccountName, GetIFID());
 		TRACE("%s\n",sStr);
 		//***SMGW35-13, 2004-10-12, jdz, modi begin***//
         GetSmsApp()->WriteTestRecord((LPCSTR)sStr, 1);

@@ -6,13 +6,14 @@
 #include <sstream>
 #include <vector>
 
-extern unsigned long int g_RecvAckCount;
-extern unsigned long int g_RecvSucAckCount;
-extern unsigned long int g_RecvFailAckCount;
-extern unsigned long int g_RecvSMCount;
-extern unsigned long int g_SendSucAckCount;
+extern  long int g_RecvAckCount;
+extern  long int g_RecvSucAckCount;
+extern  long int g_RecvFailAckCount;
+extern  long int g_RecvSMCount;
+extern  long int g_SendSucAckCount;
+extern  long int g_AckOutReSubmitCount;
 
-extern std::vector<CallStackInfo> GetCallStack(const CONTEXT *pContext);
+extern std::vector<CallStackInfo> GetCallStack(const CONTEXT *pContext) ;
 
 int zmq_error(int code , PEXCEPTION_POINTERS p)
 {
@@ -157,6 +158,7 @@ CZmqThread::CZmqThread(CZmqClientService* pOwner)
 
 	m_pOwner = pOwner;
 	m_loop = nullptr;
+	m_longsm_index = 0;
 	int i = 0;
 	for(;i<MAX_SOCK_SZIE;i++)
 	{		
@@ -308,23 +310,30 @@ int CZmqThread::proxy_read_event (zloop_t *loop, zsock_t *reader, void *arg)
 		{	
 			APP_BEGIN_LOG(5)
 				CString log;
-				log.Format("CZmqThread::proxy_read_event rcv hello ok account[%s] oldstat[%d][%d]",
-					pTh->m_pOwner->GetAccount()->GetName(),pdata->active,pdata->status);
+				log.Format("CZmqThread::proxy_read_event rcv hello ok account[%s] oldstat[%s][%s]",
+					pTh->m_pOwner->GetAccount()->GetName(),GetActiveStr(pdata->active),GetStatusStr(pdata->status));
 				APP_DEBUG_LOG(log);
+				VLOG_EVERY_N(4,5) << (LPCTSTR)log ;
 			APP_END_LOG;
 			pdata->active = SOCK_ACTIVE;
 			pdata->last_time = time(nullptr);
 			if(pdata->status == STATE_IDLE||pdata->status == STATE_COMMAND)
+			{
+
 					pTh->ProcessSend(pdata);
+			}
 		}
 		else if(memcmp(zframe_data(first_frame),"BYE",3)==0)
 		{
+			VLOG(4)<<"rcv bye from remote account:["<<pdata->owner->m_pOwner->GetAccount()->GetName() <<"]["<<GetStatusStr(pdata->status) <<"]["<< GetActiveStr(pdata->active)<<"]";
+
 			pdata->active = SOCK_DEACTIVE;
 			pdata->last_time = time(nullptr);
 			pdata->status = STATE_IDLE;
 		}
 		else if(memcmp(zframe_data(first_frame),"BUSY",4)==0)
 		{
+			VLOG(4)<<"rcv busy from remote account:["<<pdata->owner->m_pOwner->GetAccount()->GetName() <<"]["<<GetStatusStr(pdata->status) <<"]["<< GetActiveStr(pdata->active)<<"]";
 			pdata->active = SOCK_BUSY;
 			pdata->last_time = time(nullptr);
 			pdata->status = STATE_IDLE;
@@ -392,6 +401,9 @@ int CZmqThread::time_event_for_shakehand (zloop_t *loop, int timer_id, void *arg
 	int i = 0;
 	for(;i<MAX_SOCK_SZIE;i++)
 	{
+		VLOG_EVERY_N(4,10)<<"account:["<<pTh->m_pOwner->GetAccount()->GetName() <<"]["<<GetStatusStr(pTh->m_sock_array[i].status) <<"]["<< GetActiveStr(pTh->m_sock_array[i].active)<<"]"
+			<<"["<<(int)time(nullptr)<<"]"
+			<<"["<<(int)pTh->m_sock_array[i].last_time<<"]";
 		auto now = time(nullptr);
 		if( pTh->m_sock_array[i].status == CZmqThread::STATE_IDLE
 			&& pTh->m_sock_array[i].active == CZmqThread::SOCK_BUSY
@@ -441,8 +453,14 @@ int CZmqThread::time_event_for_shakehand (zloop_t *loop, int timer_id, void *arg
 
 		{
 			//time out for req
+			VLOG(4)<<"time out for req account:["<<pTh->m_pOwner->GetAccount()->GetName() <<"]["<<GetStatusStr(pTh->m_sock_array[i].status) <<"]["<< GetActiveStr(pTh->m_sock_array[i].active)<<"]";
 			pTh->m_sock_array[i].status = CZmqThread::STATE_IDLE;
 			pTh->m_sock_array[i].active = CZmqThread::SOCK_DEACTIVE;
+			
+			int sz = pTh->m_sock_array[i].req_msgs.size();
+			::InterlockedExchangeAdd(&g_AckOutReSubmitCount,sz);
+			::InterlockedExchangeAdd(&pTh->m_pOwner->GetAccount()->m_FlowStat.dwAckOutReSubmitCount,sz);
+
 			pTh->RollbackData(&pTh->m_sock_array[i]);
 			pTh->m_sock_array[i].last_req_time = time(nullptr);
 		}
@@ -535,7 +553,15 @@ int CZmqThread::ProcessSend(proxy_socket_data* env)
 		auto sm = Queue->PopfrontWaitQue(pri);
 		if(sm==nullptr)
 			break;
-		sms.push_back(sm);
+		std::list<LPVOID> longpackaged_sms;
+		package_longsm(sm,longpackaged_sms);
+		if(longpackaged_sms.size())
+			sms.insert(sms.end(),longpackaged_sms.begin(),longpackaged_sms.end());
+		else
+		{
+			check_timeout_longsm(longpackaged_sms);
+			sms.insert(sms.end(),longpackaged_sms.begin(),longpackaged_sms.end());
+		}
 	}
 
 #define MAX_SM_PACKET_SIZE 10*1024
@@ -552,7 +578,7 @@ int CZmqThread::ProcessSend(proxy_socket_data* env)
 		//AUTO_LOCK(&pMng->m_Lock);
 		for(i=0;i<sms.size();i++)
 		{
-			sz = ((CShortMsg*)sms[i])->GetMessagePacket((tagSmsSubmitAddr *)tmpdata,sz);
+			sz = ((CShortMsg*)sms[i])->GetMessagePacket((tagSmsSubmitAddr *)tmpdata,sz,true);
 			int len = ((tagSmsSubmitAddr *)tmpdata)->nLen;
 			zmsg_add(msg,zframe_new(tmpdata,len));
 		}
@@ -570,12 +596,90 @@ int CZmqThread::ProcessSend(proxy_socket_data* env)
 		APP_DEBUG_LOG(log);
 		APP_END_LOG;
 		::InterlockedExchangeAdd(&pAccount->m_FlowStat.dwSendSMCount,sms.size());
-		extern unsigned long int g_SendSMCount;
+		extern  long int g_SendSMCount;
 		::InterlockedExchangeAdd(&g_SendSMCount,sms.size());
 		env->status = STATE_REQ;
 		delete tmpdata;
 	}
 
+	return 0;
+}
+
+int CZmqThread::package_longsm(LPVOID pmsg,std::list<LPVOID>& outmsgs)
+{
+	std::string key;
+	int longsm_total_count;
+	int sm_index;
+	CShortMsg* pIn = (CShortMsg*)pmsg;
+	pIn->GetLongSM_Info(key,longsm_total_count,sm_index);
+	if(longsm_total_count==0)
+	{
+
+		outmsgs.push_back(pmsg);
+		return 0;
+	}
+
+	std::shared_ptr<long_shortmsg> pnew(new long_shortmsg);
+	auto itr = m_longsm_table.emplace(std::make_pair(key,pnew));
+	if(itr.second == true)
+	{
+		//insert a new msg;
+		itr.first->second->key = key;
+		itr.first->second->msgs.push_back(pmsg);
+		itr.first->second->total = longsm_total_count;
+		itr.first->second->index = this->m_longsm_index++;//set to next id
+		itr.first->second->start_time = time(nullptr);//set to get first item time
+		std::weak_ptr<long_shortmsg> week((itr.first->second));
+		this->m_longsm_timer_index.push_back(week);
+		VLOG(5)<<"rcv new longmsg key=["<<key<<"] count["<<longsm_total_count <<"]index["<<itr.first->second->index<<"]subindex["<<sm_index<<"]";
+	}
+	else
+	{
+		//package a long_sm and check rcv_complete
+		itr.first->second->msgs.push_back(pmsg);
+
+		VLOG(5)<<"rcv longmsg key=["<<key<<"] count["<<itr.first->second->total<<"]index["<<itr.first->second->index<<"]subindex["<<sm_index<<"]"<<"rcvcount["<<itr.first->second->msgs.size()<<"]";
+		if(itr.first->second->total == itr.first->second->msgs.size())
+		{
+			//put complete sms to outmsgs
+			outmsgs.insert(outmsgs.end(),itr.first->second->msgs.begin(),itr.first->second->msgs.end());
+			//remove from the table
+			VLOG(5)<<"rcv longmsg complete key=["<<key<<"] count["<<itr.first->second->total <<"]";
+			m_longsm_table.erase(itr.first);
+		}
+		else if(itr.first->second->total < itr.first->second->msgs.size())
+		{
+			LOG(ERROR)<<"rcv longmsg erro key=["<<key<<"] count["<<itr.first->second->total <<"]rcvcount["<< itr.first->second->msgs.size()<<"]";
+			//error
+			return -1;
+		}
+
+	}
+	return 0;
+}
+
+int CZmqThread::check_timeout_longsm(std::list<LPVOID>& outmsgs)
+{
+	auto itr = m_longsm_timer_index.begin();
+	for(;itr!=m_longsm_timer_index.end();)
+	{
+		auto tmp_itr = itr;		
+		itr++;
+		auto psm = tmp_itr->lock();
+		if(psm==nullptr)
+		{
+			m_longsm_timer_index.erase(tmp_itr);
+			continue;
+		}
+		if(this->m_longsm_index - psm->index > 2000)
+		{
+			LOG(WARNING)<<"timeout for rcv full longsm index["<<psm->index<<"] key["<<psm->key<<"]rcvcount["<<psm->msgs.size()<<"]";
+			outmsgs.insert(outmsgs.end(),psm->msgs.begin(),psm->msgs.end());
+			m_longsm_table.erase(psm->key);
+			m_longsm_timer_index.erase(tmp_itr);
+		}
+		break;
+	}
 	return 0;
 }
 
@@ -862,6 +966,7 @@ int CZmqRcvThread::time_event_for_shakehand (zloop_t *loop, int timer_id, void *
 	int i = 0;
 	for(;i<MAX_SOCK_SZIE;i++)
 	{
+		VLOG_EVERY_N(4,10)<<"account:["<<pTh->m_pOwner->GetAccount()->GetName() <<"]["<<GetStatusStr(pTh->m_sock_array[i].status) <<"]["<< GetActiveStr(pTh->m_sock_array[i].active)<<"]";
 		auto now = time(nullptr);
 		if(pTh->m_sock_array[i].active == SOCK_ACTIVE && (now - pTh->m_sock_array[i].last_time > 5))
 		{
@@ -939,6 +1044,7 @@ int CZmqRcvThread::time_event_for_checkbusy (zloop_t *loop, int timer_id, void *
 	int st = manager->CheckBusyBySourceAccount(pTh->m_pOwner->GetAccount());
 	if(st==1)
 	{
+		VLOG_EVERY_N(4,5) << "channel is busy account [" << pTh->m_pOwner->GetAccount()->GetName()<<"]";
 			for(i=0;i<MAX_SOCK_SZIE;i++)
 			{
 				if(pTh->m_sock_array[i].status==STATE_IDLE)
@@ -952,7 +1058,7 @@ int CZmqRcvThread::time_event_for_checkbusy (zloop_t *loop, int timer_id, void *
 	{
 			for(;i<MAX_SOCK_SZIE;i++)
 			{
-				if(pTh->m_sock_array[i].status = STATE_BUSY)
+				if(pTh->m_sock_array[i].status == STATE_BUSY)
 					pTh->SendShakehand(pTh->m_sock_array[i].s_proxy,STATE_IDLE);
 				pTh->m_sock_array[i].status = STATE_IDLE;
 

@@ -870,12 +870,12 @@ int CCodeAndDecode::ConvertOleTimeToTimeStamp(LPCSTR pString,UC* pStamp)
 	if(!mStamp.ParseDateTime((LPCTSTR)pString))
 		return FALSE;
 
-	pStamp[0] = ConvertUCToBCD(UC((mStamp.GetYear())%100));
-	pStamp[1] = ConvertUCToBCD(UC(mStamp.GetMonth()));
-	pStamp[2] = ConvertUCToBCD(UC(mStamp.GetDay()));
-	pStamp[3] = ConvertUCToBCD(UC(mStamp.GetHour()));
-	pStamp[4] = ConvertUCToBCD(UC(mStamp.GetMinute()));
-	pStamp[5] = ConvertUCToBCD(UC(mStamp.GetSecond()));
+	pStamp[0] = ConvertUCToBCD((UC)((mStamp.GetYear())%100));
+	pStamp[1] = ConvertUCToBCD((UC)(mStamp.GetMonth()));
+	pStamp[2] = ConvertUCToBCD((UC)(mStamp.GetDay()));
+	pStamp[3] = ConvertUCToBCD((UC)(mStamp.GetHour()));
+	pStamp[4] = ConvertUCToBCD((UC)(mStamp.GetMinute()));
+	pStamp[5] = ConvertUCToBCD((UC)(mStamp.GetSecond()));
 
 	if(pStamp[0] == CONVERT_CHAR_BCD_ERROR ||
 	   pStamp[1] == CONVERT_CHAR_BCD_ERROR ||

@@ -200,7 +200,7 @@ int CFileCacheMng::SubmitSM(CString AccountName, CShortMsg* pMsg, int nPri)
 	if( FALSE == m_AccountFileMngMap.Lookup(AccountName, (void* &)pAccountFileMng) )
 	{
 		CString log;
-		log.Format("保存消息到文件缓存时失败，帐号名%s没找到", AccountName);
+		log.Format("保存消息到文件缓存时失败，帐号名%s没找到", (LPCTSTR)AccountName);
 		GetSmsApp()->WriteTestRecord(log, 0);	
 
 		return SUBMIT_FAIL;
@@ -221,7 +221,7 @@ bool CFileCacheMng::SaveWaitQueToFileCache(CString AccountName, CShortMsg* pMsg,
 	if( FALSE == m_AccountFileMngMap.Lookup(AccountName, (void* &)pAccountFileMng) )
 	{
 		CString log;
-		log.Format("保存消息到文件缓存时失败，帐号名%s没找到", AccountName);
+		log.Format("保存消息到文件缓存时失败，帐号名%s没找到", (LPCTSTR)AccountName);
 		GetSmsApp()->WriteTestRecord(log, 0);	
 
 		return false;

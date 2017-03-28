@@ -10,8 +10,14 @@
 #include <shlwapi.h>
 #include <vector>
 #include <sstream>
-#include "dbghelp.h" 
+#include "dbghelp.h"
+#include "shortmsg.pb.h"
 #pragma comment(lib, "dbghelp.lib")
+#pragma comment(lib,"glog.lib")
+#pragma comment(lib,"shlwapi.lib")
+#pragma comment(lib,"liblog.lib")
+#pragma comment(lib,"gflags.lib")
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 CSmsAppApp *g_App;
 
 BEGIN_MESSAGE_MAP(CSmsAppApp, CWinApp)
-	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
+	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
@@ -204,16 +210,29 @@ LONG WINAPI TopLevelExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 	//APP_BEGIN_LOG(0);
 
 	std::stringstream slog;
+	time_t rawtime;
+	struct tm* timeinfo;
+	char timE[80];
+	time(&rawtime);
+	timeinfo=localtime(&rawtime);
+	strftime(timE,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+	CString sfilename,sfilename2;
+	sfilename.Format("Smgw%s.dmp",timE);
+	sfilename2.Format("Smgw%s.dmp.log",timE);
+	DWORD dwsize;
+	HANDLE hFile2 = CreateFile( sfilename2,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL); 
+	::WriteFile(hFile2,"error dump\n",10,&dwsize,NULL);
+
 	// 确保有足够的栈空间
 	//
-#ifdef _M_IX86
-	if (pExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
-	{
-		static char TempStack[1024 * 128];
-		__asm mov eax,offset TempStack[1024 * 128];
-		__asm mov esp,eax;
-	}
-#endif	
+//#ifdef _M_IX86
+//	if (pExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
+//	{
+//		static char TempStack[1024 * 128];
+//		__asm mov eax,offset TempStack[1024 * 128];
+//		__asm mov esp,eax;
+//	}
+//#endif	
 
 	CrashInfo crashinfo = GetCrashInfo(pExceptionInfo->ExceptionRecord);
 
@@ -252,40 +271,49 @@ LONG WINAPI TopLevelExceptionFilter(struct _EXCEPTION_POINTERS *pExceptionInfo)
 	//GetSmsApp()->CloseLog();
 
 
-	time_t rawtime;
-	struct tm* timeinfo;
-	char timE[80];
-	time(&rawtime);
-	timeinfo=localtime(&rawtime);
-	strftime(timE,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
-	CString sfilename,sfilename2;
-	sfilename.Format("Smgw%s.dmp",timE);
-	sfilename2.Format("Smgw%s.dmp.log",timE);
-	DWORD dwsize;
-	HANDLE hFile2 = CreateFile( sfilename2,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL); 
 
 	::WriteFile(hFile2,slog.str().c_str(),slog.str().size(),&dwsize,NULL);
 	CloseHandle(hFile2);  
 
-
+	flushlog();
 	//	cout << "Enter TopLevelExceptionFilter Function" << endl;  
-	HANDLE hFile = CreateFile( sfilename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);  
+	/*HANDLE hFile = CreateFile( sfilename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);  
 	MINIDUMP_EXCEPTION_INFORMATION stExceptionParam;  
 	stExceptionParam.ThreadId    = GetCurrentThreadId();  
 	stExceptionParam.ExceptionPointers = pExceptionInfo;  
 	stExceptionParam.ClientPointers    = FALSE;  
-	MiniDumpWriteDump(GetCurrentProcess(),GetCurrentProcessId(),hFile,MiniDumpWithFullMemory,&stExceptionParam,NULL,NULL);  
-	CloseHandle(hFile);  
+	MiniDumpWriteDump(GetCurrentProcess(),GetCurrentProcessId(),hFile,MiniDumpWithFullMemory,&stExceptionParam,NULL,NULL);  */
+	//CloseHandle(hFile);  
 	//	getchar();
-
+	//google::ShutdownGoogleLogging();
 
 	return EXCEPTION_EXECUTE_HANDLER;
 }
+
+
+
+
 
 // CSmsAppApp construction
 
 CSmsAppApp::CSmsAppApp()
 {
+		if(AllocConsole())
+		{
+			extern int g_console;
+			g_console = 1;
+			::RemoveMenu(::GetSystemMenu ( GetConsoleWindow (), FALSE),SC_CLOSE,MF_BYCOMMAND); 
+			//::SetConsoleCtrlHandler (HandlerRoutine,TRUE); 
+			//set cout cerr to new console;
+			freopen("CONOUT$","w+t",stdout); 
+			freopen("CONOUT$","w+t",stderr);
+
+			HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); // 获取标准输出设备句柄
+			CONSOLE_SCREEN_BUFFER_INFO bInfo; 
+			GetConsoleScreenBufferInfo(hOut, &bInfo ); // 获取窗口缓冲区信息      
+			COORD size = {80, 10000};
+			SetConsoleScreenBufferSize(hOut,size); // 重新设置缓冲区大小
+		}
     m_pIFMng = NULL;
 	//updated by hyh begin  2012-7-25
 	m_bDebugLog = FALSE;
@@ -329,15 +357,6 @@ CSmsAppApp theApp;
 
 BOOL CSmsAppApp::InitInstance()
 {
-	//add wj
-	LPWSADATA lpwsaData = NULL;
-	WSADATA wsaData;
-	lpwsaData = &wsaData;
-	WORD wVersionRequested = MAKEWORD(2, 2);
-	WSAStartup(wVersionRequested, lpwsaData);
-	//end wj
-
-
 	if (!AfxSocketInit())
 	{
 		AfxMessageBox(IDP_SOCKETS_INIT_FAILED);
@@ -345,6 +364,18 @@ BOOL CSmsAppApp::InitInstance()
 	}
     ::CoInitialize(NULL);
 	
+	GOOGLE_PROTOBUF_VERIFY_VERSION;
+	//init glog
+		//printf("FLAGS_log_dir=%s %p\n",FLAGS_log_dir.c_str(),&FLAGS_log_dir);
+		//FLAGS_log_dir = pathname;
+	initlog();
+
+	LOG(INFO)<<"log init ok!";
+
+	LOG(INFO) <<"start init zsys.";
+	//init 0mq by czmq api
+	zsys_init();
+
 	m_Environment.LoadConfig();
 
 
@@ -357,7 +388,7 @@ BOOL CSmsAppApp::InitInstance()
 	//SMGW43-12, 2005-9-21, wzy, add begin//
 	m_CurrentPath.Format("%s", szCurrentDir);
 
-	tempDir.Format("%s\\ConsoleLog", m_CurrentPath);
+	tempDir.Format("%s\\ConsoleLog", (LPCTSTR)m_CurrentPath);
 	if(!PathFileExists(tempDir))
 		CreateDirectory(tempDir, NULL);
 
@@ -439,6 +470,10 @@ BOOL CSmsAppApp::InitInstance()
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
+		CString s;
+		s.Format("APP %s Has Run",(LPCTSTR)sExeMutex);
+		AfxMessageBox(s);
+
 		CWnd	*pPrevWnd = CWnd::GetDesktopWindow()->GetWindow(GW_CHILD);
 		while(pPrevWnd)
 		{
@@ -468,7 +503,9 @@ BOOL CSmsAppApp::InitInstance()
 #else
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
-    BOOL bInitRet;
+
+	
+	BOOL bInitRet;
     bInitRet = InitSmsApp();
     ASSERT(bInitRet);
 
@@ -494,9 +531,6 @@ BOOL CSmsAppApp::InitInstance()
 		//SMGW42-43, 2005-7-5, jdz, modi end//
 	}
 	
-	HANDLE process = GetCurrentProcess();		
-	SymInitialize( process,NULL,TRUE );
-	LPTOP_LEVEL_EXCEPTION_FILTER pPrevFilter =  SetUnhandledExceptionFilter(TopLevelExceptionFilter);
 
 	APP_BEGIN_LOG(0);
 		char info[200];
@@ -504,6 +538,11 @@ BOOL CSmsAppApp::InitInstance()
 		APP_DEBUG_LOG(info);
 	APP_END_LOG;
     m_pSmsDlg = NULL;
+
+	HANDLE process = GetCurrentProcess();		
+	auto bret = SymInitialize( process,NULL,TRUE );
+	LPTOP_LEVEL_EXCEPTION_FILTER pPrevFilter =  SetUnhandledExceptionFilter(TopLevelExceptionFilter);
+
 
     if(bInitRet == TRUE)
     {
@@ -794,7 +833,7 @@ void CSmsAppApp::WriteConsoleLog(LPCSTR msg)
 	}
 
 	CString FileName;
-	FileName.Format("%s\\Console.txt", m_CurrentPath);
+	FileName.Format("%s\\Console.txt", (LPCTSTR)m_CurrentPath);
 	CFileException e;
 	
 	EnterCriticalSection(&m_ConsoleLogFileLock);
@@ -819,7 +858,7 @@ void CSmsAppApp::WriteConsoleLog(LPCSTR msg)
 
 	CTime CurrentTime = CTime::GetCurrentTime();
 	CString log;
-	log.Format("%s%s\r\n", CurrentTime.Format("%Y/%m/%d %H:%M:%S"), msg);
+	log.Format("%s%s\r\n", (LPCTSTR)CurrentTime.Format("%Y/%m/%d %H:%M:%S"), msg);
 	
 	//SMGW251-21, 2006-10-19, WZY add begin//
 	m_ConsoleLogFile.SeekToEnd();
@@ -833,7 +872,7 @@ void CSmsAppApp::WriteConsoleLog(LPCSTR msg)
 		CString NewFileName;		
 		m_LastMoveConsoleLogTime = COleDateTime::GetCurrentTime();
 
-		NewFileName.Format("%s\\ConsoleLog\\ConsoleLog.%s.txt", m_CurrentPath,  CurrentTime.Format("%Y%m%d%H%M%S"));
+		NewFileName.Format("%s\\ConsoleLog\\ConsoleLog.%s.txt", (LPCTSTR)m_CurrentPath,  (LPCTSTR)CurrentTime.Format("%Y%m%d%H%M%S"));
 		MoveFile(FileName, NewFileName);
 	}
 
@@ -862,13 +901,13 @@ void CSmsAppApp::MoveTmpConsoleLog(bool flag)
 		
 	CString FileName;
 	//SMGW251-21, 2006-11-3, WZY add begin//
-	FileName.Format("%s\\Console.txt", m_CurrentPath);
+	FileName.Format("%s\\Console.txt", (LPCTSTR)m_CurrentPath);
 	//SMGW251-21, 2006-11-3, WZY add end//
 	
 	CString NewFileName;
 	CTime CurrentTime = CTime::GetCurrentTime();
 	m_LastMoveConsoleLogTime = COleDateTime::GetCurrentTime();
-	NewFileName.Format("%s\\ConsoleLog\\ConsoleLog.%s.txt", m_CurrentPath,  CurrentTime.Format("%Y%m%d%H%M%S"));
+	NewFileName.Format("%s\\ConsoleLog\\ConsoleLog.%s.txt", (LPCTSTR)m_CurrentPath,  (LPCTSTR)CurrentTime.Format("%Y%m%d%H%M%S"));
 	MoveFile(FileName, NewFileName);
 
 
@@ -1106,14 +1145,14 @@ void MakeDirectory(LPCTSTR dir)
 							if(ret)
 							{
 								CString log;
-								log.Format("目录%s不存在，已创建", SubPath);
+								log.Format("目录%s不存在，已创建", (LPCTSTR)SubPath);
 								GetSmsApp()->WriteTestRecord((char *)(LPCTSTR)log, 0);
 							}
 							else
 							{
 								DWORD errcode = GetLastError();
 								CString log;
-								log.Format("目录%s不存在，创建失败，错误码%u.", SubPath, errcode);
+								log.Format("目录%s不存在，创建失败，错误码%u.", (LPCTSTR)SubPath, errcode);
 								GetSmsApp()->WriteTestRecord((char *)(LPCTSTR)log, 0);
 							}
 						}
@@ -1142,7 +1181,7 @@ void MakeDirectory(LPCTSTR dir)
 			}
 			i--;
 		}
-		
+
 		CString log;
 		log.Format("目录%s设置错误", dir);
 		GetSmsApp()->WriteTestRecord((char *)(LPCTSTR)log, 0);

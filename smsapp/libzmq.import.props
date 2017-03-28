@@ -58,13 +58,27 @@
           SourceFiles="$(ProjectDir)..\..\libzmq\bin\$(PlatformName)\Release\$(PlatformToolset)\dynamic\libzmq.pdb"
           DestinationFiles="$(TargetDir)libzmq.pdb"
           SkipUnchangedFiles="true" />
+<!--		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\$(PlatformName)\Release\libglog.pdb"
+          DestinationFiles="$(TargetDir)libglog.pdb"
+          SkipUnchangedFiles="true" />		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\$(PlatformName)\Release\libglog.lib"
+          DestinationFiles="$(TargetDir)libglog.lib"
+          SkipUnchangedFiles="true" />		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\$(PlatformName)\Release\libglog.dll"
+          DestinationFiles="$(TargetDir)libglog.dll"
+          SkipUnchangedFiles="true" />
+-->		  
   </Target>
 
   <!-- Messages -->
 
   <Target Name="libzmq-info" BeforeTargets="AfterBuild" Condition="'$(Linkage-libzmq)' == 'dynamic'">
     <Message Text="Copying libzmq.dll -&gt; $(TargetDir)libzmq.dll" Importance="high"/>
-    <Message Text="Copying libzmq.pdb -&gt; $(TargetDir)libzmq.pdb" Importance="high" Condition="$(Configuration.IndexOf('Debug')) != -1" />
+    <Message Text="Copying libzmq.pdb -&gt; $(TargetDir)libzmq.pdb" Importance="high" />
   </Target>
 
 </Project>

@@ -19,32 +19,32 @@ static char THIS_FILE[]=__FILE__;
 
 
 extern int g_ReSendFlag;
-extern unsigned long int  g_SendSMCount;
-extern unsigned long int g_RecvAckCount;
-extern unsigned long int g_RecvSucAckCount;
-extern unsigned long int g_RecvFailAckCount;
-extern unsigned long int g_RecvAbnorAckCount;
-extern unsigned long int g_WaitQueCount;
-extern unsigned long int g_SendSucCount;
-extern unsigned long int g_SendFailCount;
+extern  long int  g_SendSMCount;
+extern  long int g_RecvAckCount;
+extern  long int g_RecvSucAckCount;
+extern  long int g_RecvFailAckCount;
+extern  long int g_RecvAbnorAckCount;
+extern  long int g_WaitQueCount;
+extern  long int g_SendSucCount;
+extern  long int g_SendFailCount;
 //***SMGW35-12, 2004-09-28,jdz modi begin***//
-extern unsigned long int g_SendQueCount;
-extern unsigned long int g_FileCacheCount;
+extern  long int g_SendQueCount;
+extern  long int g_FileCacheCount;
 //***SMGW35-12, 2004-09-28,jdz modi begin***//
-extern unsigned long int g_AckErrReSubmitCount;
-extern unsigned long int g_AckOutReSubmitCount;
-extern unsigned long int g_AckError[5000];
+extern  long int g_AckErrReSubmitCount;
+extern  long int g_AckOutReSubmitCount;
+extern  long int g_AckError[5000];
 
 //add by jdz 2004.03.23 for 发送状态报告计数
 //extern int g_ReSubmitCount;
-extern unsigned long int g_SendSucAckCount;
-extern unsigned long int g_SendFailAckCount;
-extern unsigned long int g_SendReportCount;
+extern  long int g_SendSucAckCount;
+extern  long int g_SendFailAckCount;
+extern  long int g_SendReportCount;
 extern struct DestAddrFlowStat g_DestAddrFlow;
 //extern int g_SendSucReportCount;
 //extern int g_SendFailReportCount;
-extern unsigned long int g_SucReportSendCount;
-extern unsigned long int g_FailReportSendCount;
+extern  long int g_SucReportSendCount;
+extern  long int g_FailReportSendCount;
 extern int g_WriteReportLog ;
 extern CString g_WriteReportAccount ;
 //end add
@@ -1655,6 +1655,7 @@ void  CDealShortMsg::SendOut(int &nStatus,CConnPoint* pAccount,CShortMsg* pMsg,D
 			}
 			
 			nlen = sizeof(tagSmsSubmitAddr);
+			bool binnner = GetAccount()->GetServiceType()==SERVICE_FEE || GetAccount()->GetServiceType()==SERVICE_CP_SMG_QUEUE;
 			if(!pMsg->GetMessagePacket((tagSmsSubmitAddr*)pTemp,nlen))
 			{
 				nStatus =-1;

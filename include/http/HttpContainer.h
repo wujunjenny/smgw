@@ -5,6 +5,7 @@
 #include <Idrv\Idrv.h>
 #include <stream\stream.h>
 #include <os\os.h>
+#include <memory>
 
 
 #define REPLY_OK		0
@@ -24,7 +25,7 @@
 
 #define _rcv_status_error			-1
 
-inline std::string& sTrim(std::string& s)
+inline std::string& sTrim(std::string s)
 {	s.erase(0,s.find_first_not_of(" \r\n")); 
 	s.erase(s.find_last_not_of(" \r\n")+1);
 	return s;
@@ -54,6 +55,7 @@ struct hash_istring: public std::unary_function<HANDLE,std::size_t>
 	};
 };
 
+struct http_parser;
 
 class SHAREINFO_API HttpMessage
 {
@@ -61,8 +63,8 @@ public:
 	HttpMessage()
 	{
 		m_contentlength=0;
-		m_btrunk=0;
-		m_rcvstatus = _rcv_status_null;
+		//m_btrunk=0;
+		//m_rcvstatus = _rcv_status_null;
 	};
 	HttpMessage(HttpMessage&& mv);
 	HttpMessage(const HttpMessage& clone);
@@ -133,6 +135,12 @@ public:
 		return 0;
 	}
 
+	int AppendContent(const char* pdata,int len)
+	{
+		auto rt = m_content.Write(pdata,len);
+		m_contentlength = m_content.GetDataCount();
+		return rt;
+	};
 
 	void clear()
 	{
@@ -140,8 +148,8 @@ public:
 		m_heads.clear();
 		m_content.Clear();
 		m_contentlength=0;
-		m_btrunk=0;
-		m_rcvstatus = _rcv_status_null;
+		//m_btrunk=0;
+		//m_rcvstatus = _rcv_status_null;
 	};
 
 
@@ -163,16 +171,24 @@ public:
 	IMemStream m_content;
 
 	//for rcv tmp data
-	::std::string m_tmphead;
+	//::std::string m_tmphead;
+	//::std::string m_tmphead_value;
 	int m_contentlength;
 	int m_bRequest;
-	int m_rcvstatus;
+	//http version
+	short http_major;
+	short http_minor;
+	int	  method;
+	int   status_code;
+	//method
+
+	//int m_rcvstatus;
 	
 	//for rcv chunk tmp data
-	int m_btrunk;
-	int m_chunkstate;
-	int m_chunksize;
-	int m_chunktmplen;
+	//int m_btrunk;
+	//int m_chunkstate;
+	//int m_chunksize;
+	//int m_chunktmplen;
 	protected:
 
 
@@ -243,7 +259,7 @@ protected:
 class HttpEvent
 {
 public:
-	virtual int OnError(HANDLE hSession,HANDLE hDrv,int nerror) = 0;
+	virtual int OnError(HANDLE hSession,HANDLE hDrv,int nerror,HANDLE hUserParam) = 0;
 	virtual int OnMsg(HttpMessage& msg,HANDLE hSession,HANDLE hDrv,HANDLE hUserParam) = 0;
 };
 
@@ -252,7 +268,7 @@ class IResponseEvent : public HttpEvent
 public:
 	virtual int OnResponse(HttpResponse& rsp,HANDLE hSession,HANDLE hDrv,HANDLE hUserParam){return 0;};
 
-	virtual int OnError(HANDLE hSession,HANDLE hDrv,int nerror){ return 0;};
+	virtual int OnError(HANDLE hSession,HANDLE hDrv,int nerror,HANDLE hUserParam){ return 0;};
 protected:
 	virtual int OnMsg(HttpMessage& msg,HANDLE hSession,HANDLE hDrv,HANDLE hUserParam)
 	{
@@ -378,17 +394,37 @@ typedef	struct _handle_task
 	int tasktype;
 	int status;
 	HttpMessage readMessage;
+	bool hasnewhead;
+	::std::string m_tmphead;
+	::std::string m_tmphead_value;
+
 	std::list<HANDLE> waitReadList;
 	std::list<HANDLE> waitWriteList;
+	http_parser* httpdecoder;
 	time_t activetime;
 	time_t starttime;
 	std::multimap<time_t,HANDLE>::iterator time_index;
 	int ref;
 	bool brelease;
+	CHttpContainer* owner;
 	_handle_task();
+	~_handle_task();
 }HANDLE_TASK;
 
-
+public:
+	static int message_begin_cb(http_parser *p);
+	static int header_field_cb(http_parser *p, const char *buf, size_t len);
+	static int header_value_cb(http_parser *p, const char *buf, size_t len);
+	static int request_url_cb(http_parser *p, const char *buf, size_t len);
+	static int response_status_cb(http_parser *p, const char *buf, size_t len);
+	static int body_cb(http_parser *p, const char *buf, size_t len);
+	static int headers_complete_cb(http_parser *p);
+	static int req_message_complete_cb(http_parser *p);
+	static int rep_message_complete_cb(http_parser *p);
+	static int chunk_header_cb(http_parser *p);
+	static int chunk_complete_cb(http_parser *p);
+protected:
+	
 	int SubmitRequest(SESSION* pSession, HttpRequest& req);
 	int ReplySession(SESSION* pSession, HttpResponse& rsp);
 
@@ -431,6 +467,11 @@ typedef	struct _handle_task
 	HANDLE m_hMTHandle;
 	int m_TimeOut_sec;
 	void MTThreadFun();
+
+
+	
+
+
 public:
 	int RegisterCallBack(const char* pKey,const char* pFunName ,LPVOID pFun,LPVOID pObj=NULL)
 	{

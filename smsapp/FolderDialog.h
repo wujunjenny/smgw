@@ -9,7 +9,7 @@
 
 class CFolderDialog  
 {
-friend static int CALLBACK BrowseDirectoryCallback(
+ friend int CALLBACK BrowseDirectoryCallback(
 				HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
 public:

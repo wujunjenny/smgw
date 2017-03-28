@@ -276,7 +276,7 @@ int CSmppCodeAndDecode::fnPutMessageHeader(char **cppDestBuff,int& nDestSize,cha
 	nEN=fnPutToCode(cppDestBuff,nDestSize,pMH->Command_Length,sizeof(pMH->Command_Length));
 	if(nEN!=CODE_SUCCEED) 
 		return(nEN);
-	nEN=fnPutToCode(cppDestBuff,nDestSize,pMH->Command_ID,sizeof(pMH->Command_ID));
+	nEN=fnPutToCode(cppDestBuff,nDestSize,(long)pMH->Command_ID,sizeof(pMH->Command_ID));
 	if(nEN!=CODE_SUCCEED) 
 		return(nEN);
 	

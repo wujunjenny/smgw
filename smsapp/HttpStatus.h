@@ -27,4 +27,9 @@ public:
 	CStatic m_drvstatus;
 	afx_msg void OnBnClickedButtonSockinfo();
 	afx_msg void OnBnClickedButtonDump();
+	afx_msg void OnBnClickedButtonConsole();
+	afx_msg void OnBnClickedButtonDumpMemleak();
+	afx_msg void OnBnClickedButtonMarkmem();
+	afx_msg void OnBnClickedButtonDumpV();
+	afx_msg void OnBnClickedButtonLogRet();
 };

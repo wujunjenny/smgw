@@ -6,6 +6,7 @@
 #include "timermng.h"
 
 #include "smsapp.h"
+#include "LongSMTable.h"
 //#include "servicemng.h"
 
 

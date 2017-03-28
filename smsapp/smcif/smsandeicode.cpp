@@ -7,6 +7,7 @@
 #include "SmsAndEICode.h"
 #include "smppdef.h"
 #include "cmddef.h"
+using namespace tlv;
 
 #define ESM_CLASS_STATUS_REPORT 0X04  
 #ifdef _DEBUG

@@ -8,65 +8,65 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
+#include <xutility>
 
 // *** SMGW25-14,2004-04-27,jdz add begin *** //
 struct struFlowStat
 { 
-	DWORD  dwSendSMCount;
-	DWORD  dwRecvAckCount;
-	DWORD  dwRecvSucAckCount;				
-	DWORD  dwRecvFailAckCount;				
-	DWORD  dwRecvAbnorAckCount;				
-	DWORD  dwAckErrReSubmitCount;				
-	DWORD  dwAckOutReSubmitCount;
-	DWORD  dwSendReportCount;				
-	DWORD  dwSendSucReportCount;				
-	DWORD  dwSendFailReportCount;				
-	DWORD  dwSucReportSendCount;				
-	DWORD  dwFailReportSendCount;
-	DWORD  dwRecvSMCount;
-	DWORD  dwSendSucAckCount;	
-	DWORD  dwSendFailAckCount;				
-	DWORD  dwRecvReportCount;
-	DWORD  dwReportSendSucAckCount;
-	DWORD  dwReportSendFailAckCount;				
-	DWORD  dwRecvSucReportCount;				
-	DWORD  dwRecvFailReportCount;
-	DWORD  dwEXPIREDReport;				
-	DWORD  dwUNDELIVReport;
-	DWORD  dwDELETEDReport;			
-	DWORD  dwREJECTDReport;			
-	DWORD  dwUNKNOWNReport;				
-	DWORD  dwERR_NUMReport;				
-	DWORD  dwOtherFailReport;
-	DWORD  dwWaitQueCount;
-	DWORD  dwSendQueCount;
+	LONG  dwSendSMCount;
+	LONG  dwRecvAckCount;
+	LONG  dwRecvSucAckCount;				
+	LONG  dwRecvFailAckCount;				
+	LONG  dwRecvAbnorAckCount;				
+	LONG  dwAckErrReSubmitCount;				
+	LONG  dwAckOutReSubmitCount;
+	LONG  dwSendReportCount;				
+	LONG  dwSendSucReportCount;				
+	LONG  dwSendFailReportCount;				
+	LONG  dwSucReportSendCount;				
+	LONG  dwFailReportSendCount;
+	LONG  dwRecvSMCount;
+	LONG  dwSendSucAckCount;	
+	LONG  dwSendFailAckCount;				
+	LONG  dwRecvReportCount;
+	LONG  dwReportSendSucAckCount;
+	LONG  dwReportSendFailAckCount;				
+	LONG  dwRecvSucReportCount;				
+	LONG  dwRecvFailReportCount;
+	LONG  dwEXPIREDReport;				
+	LONG  dwUNDELIVReport;
+	LONG  dwDELETEDReport;			
+	LONG  dwREJECTDReport;			
+	LONG  dwUNKNOWNReport;				
+	LONG  dwERR_NUMReport;				
+	LONG  dwOtherFailReport;
+	LONG  dwWaitQueCount;
+	LONG  dwSendQueCount;
 	
 	//***SMGW35-12, 2004-09-28,jdz add begin***//
-	DWORD  dwFileCacheCount;
+	LONG  dwFileCacheCount;
 	//***SMGW35-12, 2004-09-28,jdz add end***//
 	
 	//***SMGW40-01, 2004-12-3, jdz, add begin***//
-	DWORD  dwSendAuthReqCount;
-	DWORD  dwRcvAuthReqSucAckCount;
-	DWORD  dwRcvAuthReqFailAckCount;
+	LONG  dwSendAuthReqCount;
+	LONG  dwRcvAuthReqSucAckCount;
+	LONG  dwRcvAuthReqFailAckCount;
 	
-	DWORD  dwSendAuthCnfmCount;
-	DWORD  dwRcvAuthCnfmSucAckCount;
-	DWORD  dwRcvAuthCnfmFailAckCount;
+	LONG  dwSendAuthCnfmCount;
+	LONG  dwRcvAuthCnfmSucAckCount;
+	LONG  dwRcvAuthCnfmFailAckCount;
 	//***SMGW40-01, 2004-12-3, jdz, add end***//
 	//add by wujun for real static
 	time_t timenow;
 	time_t lasttime;
-	DWORD	nLastSendSMCount;
-	DWORD   nLastRcvSMCount;
+	LONG	nLastSendSMCount;
+	LONG   nLastRcvSMCount;
 	//end add
 
 	int GetRealSendFlow()
 	{
 		int diff = difftime(time(NULL),lasttime);
-		diff = max(1,diff);
+		diff = (std::max)(1,diff);
 		if(nLastSendSMCount<dwSendSMCount)
 		{
 			return (dwSendSMCount-nLastSendSMCount)/diff;
@@ -78,7 +78,7 @@ struct struFlowStat
 	int GetRealRcvFlow()
 	{
 		int diff = difftime(time(NULL),lasttime);
-		diff = max(1,diff);
+		diff = (std::max)(1,diff);
 		if(nLastRcvSMCount<dwRecvSMCount)
 		{
 			return (dwRecvSMCount-nLastRcvSMCount)/diff;

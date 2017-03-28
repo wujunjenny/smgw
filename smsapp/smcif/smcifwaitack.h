@@ -22,9 +22,9 @@ class CSmcIFWaitAck : public CWaitResp
 {
 public:
 	CSmcIFWaitAck();
-    CSmcIFWaitAck(int nMaxWaitCount)
+    CSmcIFWaitAck(int nMaxWaitCount):CWaitResp(nMaxWaitCount)
     {
-        CWaitResp::CWaitResp(nMaxWaitCount);
+        //CWaitResp::CWaitResp(nMaxWaitCount);
     };
 	virtual ~CSmcIFWaitAck();
 private:

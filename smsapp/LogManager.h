@@ -81,7 +81,7 @@ public:
 		CFile file;
 		char FileName[300];
 		memset(FileName, 0, sizeof(FileName));
-		sprintf(FileName, "%s", m_filename);
+		sprintf(FileName, "%s", (LPCTSTR)m_filename);
 		if(file.GetStatus( FileName, status))
 		{
 			status.m_attribute = 0x00; 
@@ -91,7 +91,7 @@ public:
 		if(flag == 0)
 		{
 			CString msg;
-			msg.Format("只读文件<%s>转换失败.", m_filename);
+			msg.Format("只读文件<%s>转换失败.", (LPCTSTR)m_filename);
 			TRACE( msg );
 		}
 		//end将只读文件换成nomal
@@ -108,7 +108,7 @@ public:
 				file.Close();
 				CString NewFileName, strTime;
 				CTime CurrentTime = CTime::GetCurrentTime();
-				NewFileName.Format("%s.%s.log", m_filename, CurrentTime.Format("%Y%m%d%H%M%S"));
+				NewFileName.Format("%s.%s.log", (LPCTSTR)m_filename, (LPCTSTR)CurrentTime.Format("%Y%m%d%H%M%S"));
 				rename(m_filename, NewFileName);
 			}
 			else

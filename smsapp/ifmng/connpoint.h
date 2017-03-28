@@ -17,6 +17,7 @@
 #include "dealshortmsg.h"
 #include <map>
 #include <string>
+#include "LongSMTable.h"
 
 // *** SMGW25-13,2004-05-01,YinBiaozheng add begin *** //
 struct struServiceCheck
@@ -294,7 +295,9 @@ public:
 	BOOL GetIsInTraffic(){return m_bIsInTraffic;};
 	void SetIsInTraffic(BOOL bIsInTraffic){m_bIsInTraffic = bIsInTraffic;};
 public:
-    char m_szName[MAX_ACCOUNTNAME_LEN];				//帐号的名字   
+    char m_szName[MAX_ACCOUNTNAME_LEN];				//帐号的名字  
+	LONGSM::CLongSMTable<CShortMsg> m_LSMtable;
+
 protected:
     
 /**********************************************************/
@@ -326,7 +329,6 @@ protected:
 	//TRUE=流量超过限制，FALSE=流量正常，
 	//该属性无需保存到DAT文件中
 	BOOL m_bIsInTraffic;
-
 // SMS7, begin, wenzhaoyang 20030510 //
 private:
 	char m_szAccountCode[MAX_ACCOUNT_CODE_LEN];			// 帐号代号

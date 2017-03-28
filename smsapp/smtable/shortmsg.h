@@ -5,6 +5,12 @@
 #include "Smppdef.h"
 #include <string>
 #include <list>
+#include "shortmsg.pb.h"
+
+#ifdef ESM_CLASS_STATUS_REPORT
+#undef define ESM_CLASS_STATUS_REPORT
+#endif
+#define ESM_CLASS_STATUS_REPORT 0X04
 
 struct SM_STRUCT
 {
@@ -44,6 +50,12 @@ public:
 	
 	~CShortMsg();
 
+	//add by wj for new serialize
+	CShortMsg(sm::gw_shortmsg* pPB);
+
+	virtual sm::gw_shortmsg GetPBPack();
+
+
 	UC GetCongestionState();
 	void SetCongestionState(UC CgsState) ;
 	
@@ -71,6 +83,12 @@ public:
 	{
 		return m_bTransferInner;
 	}
+	virtual std::wstring GetAllContentNW(){ return CCodeAndDecode().ConvertWStringToNWString(m_wlongmsg); };
+	virtual int GetSubMsgCount(){ return m_msgidlist.size()+1;};
+
+	//head == 0 add to tail else add to header
+	virtual int AddSign(int head,const char* psign ,int len);
+
 
 	void SetInnerTransfer(bool bset = true)
 	{
@@ -203,6 +221,10 @@ public:
 	void BackupServiceInfo();
 	void RestoreServiceInfo();
 	
+	//add by wj
+	int GetSMLength(){ return m_pSMData? m_pSMData->SMLength:0; };
+
+
 	//获取消息内容
 	char * GetMsgContent()
 	{
@@ -229,7 +251,7 @@ public:
 		return true;
 	}	
 	
-	int GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize);
+	int GetMessagePacket(tagSmsSubmitAddr* pMsg,int nMsgSize,bool bInner=false);
 	
 	//获取消息发送的接口号
 	UL  GetSenderID()
@@ -445,7 +467,10 @@ public:
 	//是否是状态报告
 	UC IsReport()
 	{
-		return  m_IsReport;	
+		bool isreport =false;
+		if(m_pSMData)
+			isreport = m_pSMData->EmsClass & ESM_CLASS_STATUS_REPORT;
+		return  isreport;//m_IsReport;	
 	};
 
 	
@@ -595,7 +620,7 @@ protected:
 	//重发次数
 	int m_nReSubmitCount;
 	//是否是状态报告消息
-	UC m_IsReport;
+	//UC m_IsReport;
 	//消息结构
 	SM_STRUCT* m_pSMData;
 	//消息是否发送的标记
@@ -604,7 +629,7 @@ protected:
 	CTLV *m_cTlv;
 
 public:
-	bool m_bFromHttp;
+	//bool m_bFromHttp;
 	std::wstring m_wlongmsg;
 	std::list<std::string> m_msgidlist;
 	std::string m_sendorgaddr;
@@ -618,7 +643,8 @@ public:
 	int m_sourcecodetype;
 	int m_bReturnFrist;
 	bool m_bSndToFee;
-
+	void GetLongSM_Info(std::string& key /*key identity the long SM*/,int& total_count/*total items in the SM*/,int& index/*items index*/);
+	bool IsLongSM_Item();
 };
 
 

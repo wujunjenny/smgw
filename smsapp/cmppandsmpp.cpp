@@ -571,6 +571,7 @@ int CCmppAndSmpp::fnPutBindReceiver(char **cppDestBuff,int& nDestSize,char **cpp
 
 	// 对亚信网关的特殊处理
 	UC version=pBR->interface_version; //0x12;
+	version = 0;
 	//UC version=0x12;
 	nEN=fnPutToCode(cppDestBuff,nDestSize,version,sizeof(version));
 	if(nEN!=CODE_SUCCEED) 
@@ -919,7 +920,9 @@ int CCmppAndSmpp::fnPutSubmitSm(char **cppDestBuff,int& nDestSize,char **cppOrgV
 	else
 	{
 		//strncpy(fee_type,(char*)tempValue,2);
-		switch( UC(*tempValue) )
+		unsigned char fee_tp = (UC)(*tempValue);
+		//switch( UC(*tempValue) )
+		switch( fee_tp )
 		{
 		case SMPP_NOFEE_TYPE_SM:
 			{
@@ -4020,7 +4023,7 @@ int CCmpp30AndSmpp::fnPutSubmitSm(char **cppDestBuff,int& nDestSize,char **cppOr
 	else
 	{
 		//strncpy(fee_type,(char*)tempValue,2);
-		switch( UC(*tempValue) )
+		switch( (UC)(*tempValue) )
 		{
 		case SMPP_NOFEE_TYPE_SM:
 			{
@@ -4899,6 +4902,23 @@ int CCmpp30AndSmpp::fnGetFromCode(char  **cppOrgBuff,int &nDeCnt,long int &nDest
 	//本函数把码流转换成长整型数据,此数据流高位在前
 	// nDeCnt 输入输出的都是目前已被解码的码流的长度
 	// Size 输入的是长整型数据所占的字节数
+{
+	int i;
+	char *cpDestValid;
+	cpDestValid=(char *)(&nDestValid);
+	size=sizeof(nDestValid);
+	cpDestValid+=size-1;
+	nDeCnt+=size;
+	for(i=0;i<size;i++)
+	{
+		*cpDestValid=**cppOrgBuff;
+		(*cppOrgBuff)++;
+		cpDestValid--;
+	}
+	return(DECODE_SUCCEED);
+}
+
+int CCmpp30AndSmpp::fnGetFromCode(char **cppOrgBuff ,int& nDeCnt, UL &nDestValid,  int size)
 {
 	int i;
 	char *cpDestValid;

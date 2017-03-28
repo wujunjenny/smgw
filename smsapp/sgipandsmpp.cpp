@@ -75,6 +75,7 @@ int CSgipAndSmpp::Code(LPVOID pOrgBuff,int& nOrgSize,LPVOID pDestBuff,int&  nDes
 				return(nEN);
 			break;
 		case ESME_DELIVER_SM_RESP:
+		case ESME_SHREPORT_SM_RESP:
 			nEN=fnPutDeliverSmResp(cppDestBuff,nDestSize,cppOrgBuff,nOrgSize);
 			if(nEN!=CODE_SUCCEED)
 				return(nEN);
@@ -151,7 +152,10 @@ int CSgipAndSmpp::fnPutMessageHeader(char **cppDestBuff,int& nDestSize,char **cp
 		case ESME_DELIVER_SM_RESP:
 			nCommand=SGIP_DELIVER_SM_RESP;
 			break;
-	
+		case ESME_SHREPORT_SM_RESP:
+			nCommand=SGIP_REPORT_RESP;
+			break;
+
 	   default:
 		  break;
 	}
@@ -201,9 +205,15 @@ int CSgipAndSmpp::fnPutBindReceiver(char **cppDestBuff,int& nDestSize,char **cpp
 
 	Sgip_Bind * pSgipDest=(Sgip_Bind *)(*cppDestBuff);
  
+	std::string pass = GetSmsApp()->GetEnvironment()->GetLongPassword(pBR->system_id);
+	if(pass.size()==0)
+	{
+		pass = pBR->password;
+	}
 	pSgipDest->LoginType=1;
-  strncpy(pSgipDest->LoginName,pBR->system_id,SGIP_OCT_LOGINNAME_LEN); 
-	strncpy(pSgipDest->LoginPass,pBR->password, SGIP_OCT_LOGINPASS_LEN);
+	strncpy(pSgipDest->LoginName,pBR->system_id,SGIP_OCT_LOGINNAME_LEN); 
+	//strncpy(pSgipDest->LoginPass,pBR->password, SGIP_OCT_LOGINPASS_LEN);
+	strncpy(pSgipDest->LoginPass,pass.c_str(), SGIP_OCT_LOGINPASS_LEN);
 //  strcpy(pSgipDest->LoginPass,"SMZJQXWZX");
 	memset(pSgipDest->ReServe,0,SGIP_OCT_RESERVE_LEN); 
 	

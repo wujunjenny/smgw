@@ -13,8 +13,9 @@ IMPLEMENT_DYNAMIC(CLogOption, CDialogEx)
 
 CLogOption::CLogOption(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLogOption::IDD, pParent)
+	, m_log_level(0)
 {
-
+	m_log_level = FLAGS_v;
 }
 
 CLogOption::~CLogOption()
@@ -25,6 +26,8 @@ void CLogOption::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PROPERTYGRID_RC, m_gridlocation);
+	DDX_Text(pDX, IDC_EDIT_LOG_LEVEL, m_log_level);
+	DDV_MinMaxInt(pDX, m_log_level, 0, 9);
 }
 
 
@@ -40,6 +43,8 @@ END_MESSAGE_MAP()
 void CLogOption::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	UpdateData();
+	FLAGS_v = m_log_level; 
 	CDialogEx::OnOK();
 }
 

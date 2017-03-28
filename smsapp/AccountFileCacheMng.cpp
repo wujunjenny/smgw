@@ -16,6 +16,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+#define newpack  1
+
 //extern unsigned long int g_FileCacheCount;
 extern DWORD SafeCopyFile(LPCTSTR pSrcFile, LPCTSTR pDestFile, bool bFailIfExists);
 extern DWORD SafeDeleteFile(LPCTSTR pFile);
@@ -60,14 +62,14 @@ CAccountFileCacheMng::CAccountFileCacheMng( const CString& strName, DWORD dw_MAX
 	
 		//写日志
 	CString strLog;
-	strLog.Format("%s:start load cache file ",strName);
+	strLog.Format("%s:start load cache file ",(LPCTSTR)strName);
 	GetSmsApp()->WriteTestRecord(strLog, 1);
 
 //***SMGW35-22, 2004-12-13, jdz, modi begin***//
 	InitAccountFile();
 //***SMGW35-22, 2004-12-13, jdz, modi end***//
 
-	strLog.Format("%s:end load cache file ",strName);
+	strLog.Format("%s:end load cache file ",(LPCTSTR)strName);
 	GetSmsApp()->WriteTestRecord(strLog, 1);
 	m_bCanSendMsg = true;
 }
@@ -428,7 +430,7 @@ DWORD CAccountFileCacheMng::InitAccountFile()
 				if(ErrCode)
 				{
 					CString log;
-					log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+					log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 					GetSmsApp()->WriteTestRecord(log, 0);
 				}
 			}
@@ -642,7 +644,7 @@ BOOL CSMFile::SaveToDisk(const CString &strName)
 			return false;
 		
 		CString strFileName;
-		strFileName.Format(_T("%s%s%.8X.af"), CACHE_FOLDER, strName, m_dwSerialNo );
+		strFileName.Format(_T("%s%s%.8X.af"), (LPCTSTR)CACHE_FOLDER, (LPCTSTR)strName, m_dwSerialNo );
 		
 		hFile = CreateFile( strFileName, GENERIC_WRITE, NULL, NULL,
 			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
@@ -695,12 +697,27 @@ BOOL CSMFile::SaveToDisk(const CString &strName)
 			//取得消息
 			SSMwithPri& SSMwP = m_pList->GetNext(pos);
 			
+
+#ifdef  newpack
+			{
+				auto pack = SSMwP.pSM->GetPBPack();
+				auto sbuff = pack.SerializeAsString();
+				WriteFile( hFile, &SSMwP.nPri, sizeof( SSMwP.nPri ), &dwBytes, NULL ); 
+				dwCurrentPos += dwBytes;
+				WriteFile( hFile, sbuff.data(), sbuff.size(), &dwBytes, NULL ); 
+				dwCurrentPos += dwBytes;
+				delete SSMwP.pSM;
+			}
+#else
+
 			BYTE* pBuffer = NULL;
 			DWORD dwLen = 0;
 			
 			//序列化CShortMsg
 			//SSMwP.pSM->ToStream( pBuffer, dwLen );
 			SSMwP.pSM->NewToStream( pBuffer, dwLen );
+
+	
 			//优先级
 			int nPri = SSMwP.nPri;
 			//删除CShortMsg
@@ -716,6 +733,8 @@ BOOL CSMFile::SaveToDisk(const CString &strName)
 				dwCurrentPos += dwBytes;
 				delete pBuffer;
 			}
+#endif
+
 		}
 		
 		//从开始写文件头
@@ -743,7 +762,7 @@ BOOL CSMFile::SaveToDisk(const CString &strName)
 			if(ErrCode)
 			{
 				CString log;
-				log.Format("复制缓存文件%s到对端%s失败，失败原因%u", strFileName, RemoteFileName, ErrCode);
+				log.Format("复制缓存文件%s到对端%s失败，失败原因%u", (LPCTSTR)strFileName, (LPCTSTR)RemoteFileName, ErrCode);
 				GetSmsApp()->WriteTestRecord(log, 0);
 			}
 		}
@@ -774,10 +793,10 @@ BOOL CSMFile::SetSerialNo(const CString &strName, DWORD dwSerialNo)
 	}
 
 	CString strFileNameOld;
-	strFileNameOld.Format(_T("%s%s%.8X.af"), CACHE_FOLDER, strName, m_dwSerialNo );
+	strFileNameOld.Format(_T("%s%s%.8X.af"), (LPCTSTR)CACHE_FOLDER, (LPCTSTR)strName, m_dwSerialNo );
 
 	CString strFileNameNew;
-	strFileNameNew.Format(_T("%s%s%.8X.af"), CACHE_FOLDER, strName, dwSerialNo );
+	strFileNameNew.Format(_T("%s%s%.8X.af"), (LPCTSTR)CACHE_FOLDER, (LPCTSTR)strName, dwSerialNo );
 
 	if( MoveFile( strFileNameOld, strFileNameNew ) )
 	{
@@ -799,7 +818,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 		}
 		
 		CString strFileName;
-		strFileName.Format(_T("%s%s%.8X.af"), CACHE_FOLDER, strName, m_dwSerialNo );
+		strFileName.Format(_T("%s%s%.8X.af"), (LPCTSTR)CACHE_FOLDER, (LPCTSTR)strName, m_dwSerialNo );
 		
 		HANDLE hFile = CreateFile( strFileName, GENERIC_READ, NULL, NULL,
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
@@ -824,7 +843,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 				if(ErrCode)
 				{
 					CString log;
-					log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+					log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 					GetSmsApp()->WriteTestRecord(log, 0);
 				}
 			}
@@ -851,7 +870,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 				if(ErrCode)
 				{
 					CString log;
-					log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+					log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 					GetSmsApp()->WriteTestRecord(log, 0);
 				}
 			}
@@ -872,7 +891,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 				if(ErrCode)
 				{
 					CString log;
-					log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+					log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 					GetSmsApp()->WriteTestRecord(log, 0);
 				}			
 			}
@@ -899,7 +918,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 				if(ErrCode)
 				{
 					CString log;
-					log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+					log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 					GetSmsApp()->WriteTestRecord(log, 0);
 				}
 			}
@@ -929,18 +948,10 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 			
 			if( NULL == byReadBuffer )
 				break;
-			CShortMsg* pSM = new CShortMsg();
-			TRACE("<%s><%s><%d> new   [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
-			if( NULL == pSM )
-			{ 
-				delete byReadBuffer; 
-				break; 
-			}
 			
 			if( FALSE == ReadFile( hFile, byReadBuffer, dwReadSize, &dwBytes, NULL ) || dwBytes < dwReadSize )
 			{
-				delete byReadBuffer;
-				delete pSM;
+				delete []byReadBuffer;
 				break;
 			}
 			
@@ -949,6 +960,40 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 			memcpy( &SSMwP.nPri, byReadBuffer+dwDecodePos, sizeof(SSMwP.nPri) );
 			dwDecodePos += sizeof(SSMwP.nPri);
 			
+			CShortMsg* pSM = nullptr;
+			//TRACE("<%s><%s><%d> new   [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
+			//if( NULL == pSM )
+			//{ 
+			//	delete []byReadBuffer; 
+			//	break; 
+			//}
+#ifdef newpack
+			{
+				sm::gw_shortmsg pk;
+				if(!pk.ParseFromArray( byReadBuffer+dwDecodePos, dwReadSize - dwDecodePos))
+				{
+					LOG(WARNING)<<"CSMFile::LoadToMem() sm::gw_shortmsg load from file error";
+					break;
+				}
+				VLOG(5)<<"load gw_shortmsg from file ok";
+				if(pk.lsm_case() != pk.kSubsms)
+				{
+					VLOG(5)<<"new CShortMsg from pk";
+					pSM = new CShortMsg(&pk);
+					
+				}
+				else
+				{
+					VLOG(5) << "Load long sm data from file";
+					LONGSM::Clongsmdata<CShortMsg>* plsm = new LONGSM::Clongsmdata<CShortMsg>();
+
+					pSM = plsm;
+				}
+				SSMwP.pSM = pSM;
+				m_pList->AddTail( SSMwP );
+			}
+#else
+			pSM = new CShortMsg();
 			//if( TRUE == pSM->FromStream( byReadBuffer+dwDecodePos, dwReadSize - dwDecodePos ) )
 			if( pSM->NewFromStream( byReadBuffer+dwDecodePos, dwReadSize - dwDecodePos ) > 0 )
 
@@ -964,11 +1009,12 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 			else
 			{
 				CString log;
-				log.Format("CSMFile::LoadToMem()失败  %s",strName);
+				log.Format("CSMFile::LoadToMem()失败  %s",(LPCTSTR)strName);
 				GetSmsApp()->WriteTestRecord(log, 0);
 
 				delete pSM;
 			}
+#endif
 			delete byReadBuffer;
 		}
 		m_dwSMCount = dw;
@@ -983,7 +1029,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 			if(ErrCode)
 			{
 				CString log;
-				log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+				log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 				GetSmsApp()->WriteTestRecord(log, 0);
 			}
 		}
@@ -993,7 +1039,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 	catch(...)
 	{
 		CString log;
-		log.Format("CSMFile::LoadToMem()异常  %s",strName);
+		log.Format("CSMFile::LoadToMem()异常  %s",(LPCTSTR)strName);
 		GetSmsApp()->WriteTestRecord(log, 0);
 
 		if(hFile)
@@ -1072,7 +1118,7 @@ void CAccountFileCacheMng::RemoveMe()
 BOOL CSMFile::DeleteFileFromDisk(const CString& strName)
 {
 	CString strFileName;
-	strFileName.Format(_T("%s%s%.8X.af"), CACHE_FOLDER, strName, m_dwSerialNo );
+	strFileName.Format(_T("%s%s%.8X.af"), (LPCTSTR)CACHE_FOLDER, (LPCTSTR)strName, m_dwSerialNo );
 
 	DWORD ret = SafeDeleteFile( strFileName );
 	if(!GetSmsApp()->GetEnvironment()->GetRemoteGWPath().IsEmpty())
@@ -1082,7 +1128,7 @@ BOOL CSMFile::DeleteFileFromDisk(const CString& strName)
 		if(ErrCode)
 		{
 			CString log;
-			log.Format("删除对端缓存文件%s失败，失败原因%u", RemoteFileName, ErrCode);
+			log.Format("删除对端缓存文件%s失败，失败原因%u", (LPCTSTR)RemoteFileName, ErrCode);
 			GetSmsApp()->WriteTestRecord(log, 0);
 		}
 	}

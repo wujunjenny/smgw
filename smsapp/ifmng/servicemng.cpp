@@ -66,44 +66,44 @@ extern void MakeDirectory(LPCTSTR dir);
 
 int g_ReSendFlag=0;
 
-unsigned long int g_SendSMCount=0;
-unsigned long int g_RecvAckCount=0;
-unsigned long int g_RecvSucAckCount=0;
-unsigned long int g_RecvFailAckCount=0;
-unsigned long int g_RecvAbnorAckCount=0;
-unsigned long int g_WaitQueCount=0;
-unsigned long int g_SendSucCount=0;
-unsigned long int g_SendFailCount=0;
+long int g_SendSMCount=0;
+ long int g_RecvAckCount=0;
+ long int g_RecvSucAckCount=0;
+ long int g_RecvFailAckCount=0;
+ long int g_RecvAbnorAckCount=0;
+ long int g_WaitQueCount=0;
+ long int g_SendSucCount=0;
+ long int g_SendFailCount=0;
 //***SMGW35-12, 2004-09-28,jdz modi begin***//
-unsigned long int g_SendQueCount=0;
-unsigned long int g_FileCacheCount=0;
+ long int g_SendQueCount=0;
+ long int g_FileCacheCount=0;
 //***SMGW35-12, 2004-09-28,jdz modi begin***//
-unsigned long int g_SubmitCount=0;
-unsigned long int g_RecvSMCount=0;
-unsigned long int g_RecvReportCount=0;
-unsigned long int g_RecvSucReportCount=0;
-unsigned long int g_RecvFailReportCount=0;
+ long int g_SubmitCount=0;
+ long int g_RecvSMCount=0;
+ long int g_RecvReportCount=0;
+ long int g_RecvSucReportCount=0;
+ long int g_RecvFailReportCount=0;
 
 //*** SMGW25-14, 2004-04-27, jdz, add begin ***// 发送状态报告计数
-unsigned long int g_SendSucAckCount=0;
-unsigned long int g_SendFailAckCount=0;
-unsigned long int g_SendReportCount=0;
+ long int g_SendSucAckCount=0;
+ long int g_SendFailAckCount=0;
+ long int g_SendReportCount=0;
 DestAddrFlowStat g_DestAddrFlow;
-unsigned long int g_SucReportSendCount=0;
-unsigned long int g_FailReportSendCount=0;
+ long int g_SucReportSendCount=0;
+ long int g_FailReportSendCount=0;
 int g_WriteReportLog = 0 ;
 CString g_WriteReportAccount ;
 //*** SMGW25-14, 2004-04-27, jdz, add end ***//
 
-unsigned long int g_AckErrReSubmitCount=0;
-unsigned long int g_AckOutReSubmitCount=0;
+ long int g_AckErrReSubmitCount=0;
+ long int g_AckOutReSubmitCount=0;
 int g_AckError[5000];
 
 //***SMGW40-01, 2004-12-3, jdz, add begin***//
-unsigned long int g_SendAuthReqCount=0;
-unsigned long int g_RcvAuthReqAckCount=0;
-unsigned long int g_SendAuthCnfmCount=0;
-unsigned long int g_RcvAuthCnfmAckCount=0;
+ long int g_SendAuthReqCount=0;
+ long int g_RcvAuthReqAckCount=0;
+ long int g_SendAuthCnfmCount=0;
+ long int g_RcvAuthCnfmAckCount=0;
 //***SMGW40-01, 2004-12-3, jdz, add end***//
 
 
@@ -269,7 +269,7 @@ CServiceMng::CServiceMng()
 
 	//add by wj
 	m_pOmcManager = new OmcManager(this);
-
+	//m_pOmcManager = nullptr;
 	//add by wj
 	m_bInit =  TRUE;
 
@@ -896,7 +896,7 @@ void CServiceMng::OnBindIF(LPVOID pMsg)
 	APP_END_LOG;
 
 	
-    m_MapIFUsingID.Lookup(SenderID , (void*)pIF);
+    m_MapIFUsingID.Lookup(SenderID , pIF);
     
     if (pIF == NULL)  //此接口不存在
     {	
@@ -932,7 +932,7 @@ void CServiceMng::OnBindIF(LPVOID pMsg)
 
 				APP_BEGIN_LOG(5);
 				CString s;
-				s.Format("login remoteIP:%s configIP:%s",pLoginIP,pAccountIP);
+				s.Format("login remoteIP:%s configIP:%s",(LPCTSTR)pLoginIP,(LPCTSTR)pAccountIP);
 				APP_DEBUG_LOG((LPCTSTR)s);
 				APP_END_LOG;
 
@@ -963,7 +963,7 @@ void CServiceMng::OnBindIF(LPVOID pMsg)
 							TRACE("IP Address %s not exit \n", pLoginIP);
 							
 							CString log ;
-							log.Format("网关检测到异常登录(登录IP不符)，帐号:%s, IP:%s", pAccount->GetName(), pLoginIP);
+							log.Format("网关检测到异常登录(登录IP不符)，帐号:%s, IP:%s", pAccount->GetName(), (LPCTSTR)pLoginIP);
 							char pBuf[200] ;
 							memset(pBuf,0,200) ;
 							strcpy(pBuf,(LPCSTR)log) ;
@@ -1151,7 +1151,7 @@ void CServiceMng::OnBindIF(LPVOID pMsg)
 			
 			CString log;
 			
-			log.Format("网关检测到登录错误，帐号: %s, IP: %s, 原因: %s", sLoginname, sLoginIP, sReason);
+			log.Format("网关检测到登录错误，帐号: %s, IP: %s, 原因: %s", (LPCTSTR)sLoginname, (LPCTSTR)sLoginIP, (LPCTSTR)sReason);
 			char pBuf[200] ;
 			memset(pBuf,0,200) ;
 			strcpy(pBuf,(LPCSTR)log) ;
@@ -1231,7 +1231,7 @@ void CServiceMng::OnBindIF(LPVOID pMsg)
 			
             CString sStr;
 			sStr.Format("帐号%s有IP为%s的终端连接在ID为%d接口上", pBind->sBinderName, \
-                sRemoteAddr, ((CService* )pIF)->GetIFID());
+                (LPCTSTR)sRemoteAddr, ((CService* )pIF)->GetIFID());
             m_pMainApp->WriteTestRecord((LPCSTR)sStr, 1);
 			TRACE("%s\n",sStr);
 			pAccount->GetScheduleQue()->OnConnectionActive();			
@@ -1345,7 +1345,7 @@ void CServiceMng::DeleteIFUsingID(UL IFID)
 				{
 					CString sLog;
 					CString sIPAddr = pTmpIF->GetRemoteAddr();
-					sLog.Format("|%s|IP地址为%s的主机以帐号名SA退出系统|", sIPAddr, sIPAddr);
+					sLog.Format("|%s|IP地址为%s的主机以帐号名SA退出系统|", (LPCTSTR)sIPAddr, (LPCTSTR)sIPAddr);
 					GetSmsApp()->WriteConsoleLog(sLog);
 				}
 				//SMGW43-12, 2005-9-21, wzy, add end//
@@ -2139,6 +2139,23 @@ BOOL CServiceMng::OnTimer(DWORD timeID, DWORD dwPara)
 				SendQueCount += count;
 				pAccount->m_FlowStat.dwSendQueCount = count;
 				//SMGW45-18, 2006-2-10, jdz, modi end//
+
+				LONGSM::CLongSMTable<CShortMsg>::smlist list;
+				pAccount->m_LSMtable.GetBadSM(list);
+				for(auto itr=list.begin();itr!=list.end();itr++)
+				{
+					VLOG(5)<<"get timeout lsm to combine make fail send to fee ";
+					assert(*itr);
+					//will split by sendtofee ,so not need to split;
+					CheckError(*itr,E_LONGSM_PARAM_ERRO);					
+					//auto subs = (*itr)->GetAllSubSM();
+					//for(int i = 0;i<subs.size();i++)
+					//{
+					//	this->CheckError();
+					//}
+
+				}
+
 			}
 		}	
 
@@ -2897,8 +2914,17 @@ int CServiceMng::Login(CService* pIF, LPCTSTR lpszAccountName, LPCTSTR lpszAccou
 		return E_ACCOUNTNAMEERR;
     }
 	
+	//add by wj for longpassword
+	std::string pass = GetSmsApp()->GetEnvironment()->GetLongPassword(lpszAccountName);
+	if(pass.size()==0)
+	{
+		pass = pAccount->GetPassword();
+	}
+
+
 	//密码错
-	if (strcmp(pAccount->GetPassword(), lpszAccountPassword) != 0)
+	//if (strcmp(pAccount->GetPassword(), lpszAccountPassword) != 0)
+	if (strcmp(pass.c_str(), lpszAccountPassword) != 0)
     {
 		ASSERT(0);
 		return E_ACCOUNTPASSWORDERR;
@@ -2916,7 +2942,7 @@ int CServiceMng::Login(CService* pIF, LPCTSTR lpszAccountName, LPCTSTR lpszAccou
 	{
 		CString sLog;
 		CString IPAddr = pIF->GetRemoteAddr();
-		sLog.Format("|%s|IP地址为%s的主机以帐号名SA登录系统|", IPAddr, IPAddr);
+		sLog.Format("|%s|IP地址为%s的主机以帐号名SA登录系统|", (LPCTSTR)IPAddr, (LPCTSTR)IPAddr);
 		GetSmsApp()->WriteConsoleLog(sLog);
 	}
 	//SMGW43-12, 2005-9-21, wzy, add end//
@@ -3144,6 +3170,49 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
 	//设置源SourceID
 	pNewMsg->SetSourceID(SourceID);
 	
+
+	pNewMsg->m_sourceipaddr =pSrcIF->GetRemoteAddr();
+	pNewMsg->m_sourcecodetype = pSrcIF->GetCodeType();
+
+
+	if(IsLongMsg(pNewMsg))
+	{
+		int ret = pSrcAccount->m_LSMtable.CacheSubSM(pNewMsg);
+		if(ret < 0 )
+		{
+			CheckError(pNewMsg, E_LONGSM_PARAM_ERRO);
+			return;
+		}else if(ret==0)
+		{
+			RespondMsg(pNewMsg,0);
+			delete pNewMsg;
+			return;
+		}
+		else if(ret==1)
+		{
+			RespondMsg(pNewMsg,0);
+			delete pNewMsg;
+
+			pNewMsg = pSrcAccount->m_LSMtable.GetCompleteSM();
+			if(pNewMsg==nullptr)
+			{
+				return ;
+			}
+
+		}
+		else
+		{
+			LOG(ERROR)<<"error CacheSubSM ret:"<<ret;
+				return;
+		}
+
+	}
+
+
+
+
+
+
 	//获取主叫号码的类型
 	int iSrcNumberType = GetAddrType(pNewMsg->GetOrgAddr());
 	//获取被叫号码的类型
@@ -3297,7 +3366,7 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
     int dwSize=pNewMsg->GetSMData()->SMLength;	
 	int iMsgLe = dwSize;
 	CCodeAndDecode code;
-	if(8==data_coding || 24==data_coding)	
+	if(8==(data_coding&0x0C))	
     {
 		if(bLongMsg == TRUE)
 		{
@@ -3485,8 +3554,6 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
 	}		
 	//SMGW27-07, 2006-12-27, wed add end// 
 
-	pNewMsg->m_sourceipaddr =pSrcIF->GetRemoteAddr();
-	pNewMsg->m_sourcecodetype = pSrcIF->GetCodeType();
 
 	//先回Ack
 	if(GetSmsApp()->GetEnvironment()->IsResponseFirst())
@@ -4658,7 +4725,7 @@ void CServiceMng::OnWebAddOrModiAccount(PTRMSG pMsg)
 				
 				CString sLog;
 				CString IPAddr = pIF->GetRemoteAddr();
-				sLog.Format("|%s|用户%s通过WEB增加/修改帐号%s|", IPAddr, pOpAcnt->GetName(), pAddAccount->sName);
+				sLog.Format("|%s|用户%s通过WEB增加/修改帐号%s|", (LPCTSTR)IPAddr, pOpAcnt->GetName(), pAddAccount->sName);
 				GetSmsApp()->WriteConsoleLog(sLog);
 			}
 			else
@@ -4744,7 +4811,7 @@ void CServiceMng::OnAddAccount(PTRMSG pMsg)
 				{
 					CString sLog;
 					CString IPAddr = pIF->GetRemoteAddr();
-					sLog.Format("|%s|用户%s添加帐号名%s|", IPAddr, pAccount->GetName(), pAddAccount->sName);
+					sLog.Format("|%s|用户%s添加帐号名%s|", (LPCTSTR)IPAddr, pAccount->GetName(), pAddAccount->sName);
 					GetSmsApp()->WriteConsoleLog(sLog);
 				}
 				//SMGW43-12, 2005-9-21, wzy, add end//
@@ -5338,7 +5405,7 @@ void CServiceMng::OnModiAccount(PTRMSG pMsg)
 						{
 							CString sLog;
 							CString IPAddr = pIF->GetRemoteAddr();
-							sLog.Format("|%s|用户%s修改帐号%s|", IPAddr, pAccount->GetName(), pModiAccount->sName);
+							sLog.Format("|%s|用户%s修改帐号%s|", (LPCTSTR)IPAddr, pAccount->GetName(), pModiAccount->sName);
 							GetSmsApp()->WriteConsoleLog(sLog);
 						}
 						//SMGW43-12, 2005-9-21, wzy, add end//
@@ -5495,7 +5562,7 @@ void CServiceMng::OnDelAccount(PTRMSG pMsg)
 					{
 						CString sLog;
 						CString IPAddr = pIF->GetRemoteAddr();
-						sLog.Format("|%s|用户%s删除帐号名%s|", IPAddr, pAccount->GetName(), pDelAccount->sName);
+						sLog.Format("|%s|用户%s删除帐号名%s|", (LPCTSTR)IPAddr, pAccount->GetName(), pDelAccount->sName);
 						GetSmsApp()->WriteConsoleLog(sLog);
 					}
 					//SMGW43-12, 2005-9-21, wzy, add end//
@@ -5823,7 +5890,7 @@ void CServiceMng::OnAddInterface(PTRMSG pMsg)
 						{
 							CString str;
 							str.Format("%08s", AccountName);
-							sprintf(AccountName, "%s", str);
+							sprintf(AccountName, "%s", (LPCTSTR)str);
 						}
 						
 						CSmgpService* pSmcIF = new CSmgpService(pAccount, pAddInterface->ulCodeType, \
@@ -5995,7 +6062,7 @@ void CServiceMng::OnAddDistable(PTRMSG pMsg)
 				CString sLog;
 				CString IPAddr = pIF->GetRemoteAddr();
 				sLog.Format("|%s|用户%s添加帐号%s的路由:目的地址%s,源地址%s|", 
-					IPAddr, pAccount->GetName(), pAddDistable->sAccountName,
+					(LPCTSTR)IPAddr, pAccount->GetName(), pAddDistable->sAccountName,
 					pAddDistable->sDestAddr, pAddDistable->sSrcAddr);
 				GetSmsApp()->WriteConsoleLog(sLog);
 			}
@@ -6174,7 +6241,7 @@ void CServiceMng::OnDelDistable(PTRMSG pMsg)
 				CString sLog;
 				CString IPAddr = pIF->GetRemoteAddr();
 				sLog.Format("|%s|用户%s添加帐号%s的路由:目的地址%s,源地址%s|", 
-					IPAddr, pAccount->GetName(), pDelDistable->sAccountName,
+					(LPCTSTR)IPAddr, pAccount->GetName(), pDelDistable->sAccountName,
 					pDelDistable->sDestAddr, pDelDistable->sSrcAddr);
 				GetSmsApp()->WriteConsoleLog(sLog);
 			}
@@ -6491,7 +6558,7 @@ void CServiceMng::SaveAccountAndRoute()
 	//if (!hRouteTableFile.Open(m_sRouteFileName, CFile::modeCreate | CFile::modeWrite))
 	char sRouteFileName[300];
 	memset(sRouteFileName, 0, sizeof(sRouteFileName));
-	sprintf(sRouteFileName, "%s", m_sRouteFileName);
+	sprintf(sRouteFileName, "%s", (LPCTSTR)m_sRouteFileName);
 	if ( !g_safefile.OpenFileForWrite( sRouteFileName, hRouteTableFile ) )
 		// *** SMGW30-10,2004-07-23,YinBiaozheng add end *** //
 	{
@@ -6748,14 +6815,14 @@ void CServiceMng::SaveAccountAndRoute()
 	{
 		//对端目录非空时，将dat文件复制到对端网关程序目录下
 		CString LocalRouteFile; 
-		LocalRouteFile.Format("%s\\RouteInfoAndSockInfo.dat", rootDirectory);
+		LocalRouteFile.Format("%s\\RouteInfoAndSockInfo.dat", (LPCTSTR)rootDirectory);
 		CString RemoteRoureFile;
-		RemoteRoureFile.Format("%s\\RouteInfoAndSockInfo.dat", sRemotePath);
+		RemoteRoureFile.Format("%s\\RouteInfoAndSockInfo.dat", (LPCTSTR)sRemotePath);
 		DWORD ErrCode = SafeCopyFile(LocalRouteFile, RemoteRoureFile, false);
 		if(ErrCode)
 		{
 			CString log;
-			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", LocalRouteFile, RemoteRoureFile, ErrCode);
+			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", (LPCTSTR)LocalRouteFile, (LPCTSTR)RemoteRoureFile, ErrCode);
 			GetSmsApp()->WriteTestRecord(log, 0);
 		}
 	}
@@ -6768,7 +6835,7 @@ void CServiceMng::SaveAccountEx()
 	CFile cfile;
 	char strFileNameEx[300];
 	memset(strFileNameEx, 0, sizeof(strFileNameEx));
-	sprintf(strFileNameEx, "%s", m_strFileNameEx);
+	sprintf(strFileNameEx, "%s", (LPCTSTR)m_strFileNameEx);
 
 	if ( !g_safefile.OpenFileForWrite( strFileNameEx, cfile ) )
 	{
@@ -6889,14 +6956,14 @@ void CServiceMng::SaveAccountEx()
 	{
 		//对端目录非空时，将dat文件复制到对端网关程序目录下
 		CString LocalRouteFile; 
-		LocalRouteFile.Format("%s\\InterfaceData.dat", rootDirectory);
+		LocalRouteFile.Format("%s\\InterfaceData.dat", (LPCTSTR)rootDirectory);
 		CString RemoteRoureFile;
-		RemoteRoureFile.Format("%s\\InterfaceData.dat", sRemotePath);
+		RemoteRoureFile.Format("%s\\InterfaceData.dat", (LPCTSTR)sRemotePath);
 		DWORD ErrCode = SafeCopyFile(LocalRouteFile, RemoteRoureFile, false);
 		if(ErrCode)
 		{
 			CString log;
-			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", LocalRouteFile, RemoteRoureFile, ErrCode);
+			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", (LPCTSTR)LocalRouteFile, (LPCTSTR)RemoteRoureFile, ErrCode);
 			GetSmsApp()->WriteTestRecord(log, 0);
 		}
 	}
@@ -6983,7 +7050,9 @@ void CServiceMng::DealStatusReport(PTRMSG  pMsg)
 	}
 	else
 	{
-		ResponseDeliverAddr(pMsg, SourceID, 0);
+		//ResponseDeliverAddr(pMsg, SourceID, 0);
+		if(pIF->GetCodeType()!= CODE_TYPE_SGIP )
+			ResponseDeliverAddr(pMsg, SourceID, 0);
 	}
 	
 	//接收时对主叫号码进行变换
@@ -7208,6 +7277,7 @@ void CServiceMng::DealStatusReport(PTRMSG  pMsg)
 
 	if ( !SendToFeeModule( pNewMsg, nStatus ) )
 	{
+		VLOG(5)<<"Send Report to Fee Fail";
 		delete pNewMsg;
 		pNewMsg = NULL;
 		return;
@@ -9434,7 +9504,6 @@ void CServiceMng::ResponseDeliverAddr(PTRMSG pMsg,char * pSMID,int nCMDStatus, i
 	
 }
 
-
 //生成内部的ID，格式：6位序号＋mmddHHMMSS（月日时分秒）
 BOOL  CServiceMng::MakeSmid(char* pBuff,int size)
 {      
@@ -11033,7 +11102,8 @@ int CServiceMng::SendReportMsg(CShortMsg* pNewMsg)
 	TRACE("<%s><%s><%d>  submitsm  [%x] \n",__FILE__,__FUNCTION__,__LINE__,pNewMsg);
 	
     int ret = pDestAccount->GetScheduleQue()->SubmitSM(pNewMsg, pNewMsg->GetPriority());
-	pDestAccount->ServiceStatAdd((CString)pNewMsg->GetServiceID());
+	CString sid = pNewMsg->GetServiceID();
+	pDestAccount->ServiceStatAdd(sid);
 
 	return ret;
 }
@@ -11683,7 +11753,9 @@ void CServiceMng::OnAuthPriceReqAck(PTRMSG  pMsg)
 			tempValue = Tlv.GetItem(Tag_Ex_Signature,tempTlvLen);
 			if (tempValue)
 			{
-				AddSignToSM(pSendSM,(char*)tempValue, (int)tempTlvLen);
+				//AddSignToSM(pSendSM,(char*)tempValue, (int)tempTlvLen);
+				int strlen = strnlen((const char* )tempValue,tempTlvLen);
+				AddSignToSM(pSendSM,(char*)tempValue,strlen);
 			}
 			//end updated by hyh 2011-12-9
 
@@ -11811,12 +11883,45 @@ BOOL CServiceMng::SendToFeeModule(CShortMsg *pSM, DWORD nStatus )
 		pSM->SetDestGwName(gwname);
 		pSM->m_bSndToFee = true;
 
+		VLOG(5)<<"send msg to fee unikey["<< (pSM->GetUnikey()?pSM->GetUnikey():"") <<"]";
+
 	}
 	else
 	{
+		VLOG(5)<<"send report to fee unikey["<<(pSM->GetUnikey()?pSM->GetUnikey():"")<<"]";
 		pSM->SetSendCmdID(SMS_SHREPORT_ADDR);
 	}
 	
+	//add by wj
+
+	auto plong = dynamic_cast<LONGSM::Clongsmdata<CShortMsg>*>(pSM);
+	if(plong)
+	{
+		auto v = plong->GetAllSubSM();
+
+		for(int i = 0;i<v.size();i++)
+		{
+
+			//char LocalFwdMsgid[26];
+			//memset(LocalFwdMsgid, 0, sizeof(LocalFwdMsgid));
+			//MakeLocalFwdMsgid(v[i]->GetSmid(), (char*)(LPCSTR)GetLocalSMGNO(pSendAccount), LocalFwdMsgid, 23);	
+			////设置LocalFwdMsgid
+			//v[i]->SetLocalFwdMsgid(LocalFwdMsgid);
+			if(v[i]==nullptr)
+				continue;
+			auto r = pAccount->GetScheduleQue()->SubmitSM(v[i], v[i]->GetPriority());
+			if(r!=0)
+			{
+				LOG(WARNING)<<"send fail account["<<pAccount->GetName()<<"] id=["<<v[i]->GetSmid()<<"] ret="<<r;
+				delete v[i];
+			}
+		}
+		delete plong;
+		return TRUE;
+	}
+	//
+
+
 	// SMGW43-29, 2005-11-14, wzy modify begin //
 	TRACE("<%s><%s><%d>  submitsm  [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
 	int nret;
@@ -11829,6 +11934,8 @@ BOOL CServiceMng::SendToFeeModule(CShortMsg *pSM, DWORD nStatus )
 	}
 	if (0 != nret)
 	{//发送失败
+		VLOG(5)<<"send to fee fail";
+
 		TRACE("<%s><%s><%d>  submitsm fail [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
 		return FALSE;
 	}
@@ -12183,7 +12290,7 @@ void CServiceMng::OnModifyAccountEx(PTRMSG pMsg)
 				
 				CString sLog;
 				CString IPAddr = pIF->GetRemoteAddr();
-				sLog.Format("|%s|用户%s修改帐号%s的扩展信息|", IPAddr, pAccount->GetName(), pModiAccountEx->sName);
+				sLog.Format("|%s|用户%s修改帐号%s的扩展信息|", (LPCTSTR)IPAddr, pAccount->GetName(), pModiAccountEx->sName);
 				GetSmsApp()->WriteConsoleLog(sLog);
 			}
 			//SMGW43-12, 2005-9-21, wzy, add end//
@@ -12871,7 +12978,7 @@ void CServiceMng::SaveCPServer()
 	//	, CFile::modeCreate | CFile::modeWrite))
 	char sCPServerFileName[300];
 	memset(sCPServerFileName, 0, sizeof(sCPServerFileName));
-	sprintf(sCPServerFileName, "%s", m_sCPServerFileName);
+	sprintf(sCPServerFileName, "%s", (LPCTSTR)m_sCPServerFileName);
 	if ( !g_safefile.OpenFileForWrite( sCPServerFileName, cfile ) )
 		// *** SMGW30-10,2004-07-23,YinBiaozheng add end *** //
 	{
@@ -12926,14 +13033,14 @@ void CServiceMng::SaveCPServer()
 	{
 		//对端目录非空时，将dat文件复制到对端网关程序目录下
 		CString LocalRouteFile; 
-		LocalRouteFile.Format("%s\\CPCodeAndFee.dat", rootDirectory);
+		LocalRouteFile.Format("%s\\CPCodeAndFee.dat", (LPCTSTR)rootDirectory);
 		CString RemoteRoureFile;
-		RemoteRoureFile.Format("%s\\CPCodeAndFee.dat", sRemotePath);
+		RemoteRoureFile.Format("%s\\CPCodeAndFee.dat", (LPCTSTR)sRemotePath);
 		DWORD ErrCode = SafeCopyFile(LocalRouteFile, RemoteRoureFile, false);
 		if(ErrCode)
 		{
 			CString log;
-			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", LocalRouteFile, RemoteRoureFile, ErrCode);
+			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", (LPCTSTR)LocalRouteFile, (LPCTSTR)RemoteRoureFile, ErrCode);
 			GetSmsApp()->WriteTestRecord(log, 0);
 		}
 	}
@@ -12951,7 +13058,7 @@ void CServiceMng::SavePaymnt()
 	//if (!hPaymntRouteTableFile.Open(m_sPaymntRouteFileName, CFile::modeCreate | CFile::modeWrite))
 	char sPaymntRouteFileName[300];
 	memset(sPaymntRouteFileName, 0, sizeof(sPaymntRouteFileName));
-	sprintf(sPaymntRouteFileName, "%s", m_sPaymntRouteFileName);
+	sprintf(sPaymntRouteFileName, "%s", (LPCTSTR)m_sPaymntRouteFileName);
 	if ( !g_safefile.OpenFileForWrite( sPaymntRouteFileName, hPaymntRouteTableFile ) )
 		// *** SMGW30-10,2004-07-23,YinBiaozheng add end *** //
 	{
@@ -13005,14 +13112,14 @@ void CServiceMng::SavePaymnt()
 	{
 		//对端目录非空时，将dat文件复制到对端网关程序目录下
 		CString LocalRouteFile; 
-		LocalRouteFile.Format("%s\\PaymntRoute.dat", rootDirectory);
+		LocalRouteFile.Format("%s\\PaymntRoute.dat", (LPCTSTR)rootDirectory);
 		CString RemoteRoureFile;
-		RemoteRoureFile.Format("%s\\PaymntRoute.dat", sRemotePath);
+		RemoteRoureFile.Format("%s\\PaymntRoute.dat", (LPCTSTR)sRemotePath);
 		DWORD ErrCode = SafeCopyFile(LocalRouteFile, RemoteRoureFile, false);
 		if(ErrCode)
 		{
 			CString log;
-			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", LocalRouteFile, RemoteRoureFile, ErrCode);
+			log.Format("复制DAT文件%s到对端%s失败，失败原因%u", (LPCTSTR)LocalRouteFile, (LPCTSTR)RemoteRoureFile, ErrCode);
 			GetSmsApp()->WriteTestRecord(log, 0);
 		}
 	}
@@ -15283,193 +15390,208 @@ void CServiceMng::MOMTDefaultDeal(CShortMsg *pSM)
 //updated by hyh begin  2011-12-9
 BOOL CServiceMng::AddSignToSM( CShortMsg* pSM, char* szSign, int iLen)
 {
-	if(pSM->m_wlongmsg.size())
+	if(szSign[0]=='H')
 	{
-		//CCodeAndDecode code;
-		//std::wstring wzSign = code.ConvertStringToWString(szSign);
-
-		if(szSign[0]=='H')
-		{
-			//将签名加入消息内容头部
-			CCodeAndDecode code;
-			std::wstring wzSign = code.ConvertStringToWString(szSign+1);
-			//sprintf(sTemp,"%s%s",szSign+1,trueSendMsg);
-			pSM->m_wlongmsg = wzSign+pSM->m_wlongmsg;
-
-		}
-		else if(szSign[0]=='E')
-		{
-			//将签名加入消息内容尾部
-			CCodeAndDecode code;
-			std::wstring wzSign = code.ConvertStringToWString(szSign+1);
-			//strncat(sTemp, szSign+1, iSignLen-1);
-			pSM->m_wlongmsg += wzSign;
-		}
-		else
-		{
-			//将签名加入消息内容尾部
-			//strncat(sTemp, szSign, iSignLen);
-			CCodeAndDecode code;
-			std::wstring wzSign = code.ConvertStringToWString(szSign);
-			pSM->m_wlongmsg += wzSign;
-		}
-
-
-		return true;
+		return pSM->AddSign(1,szSign+1,iLen-1)==0;
 	}
-
-
-	//updated by hyh begin  2012-4-9
-	//长短信
-	BOOL	bLongMsg = IsLongMsg(pSM);
-	char* pMsgContent = pSM->GetMsgContent();
-	int iLongMsg = 0;
-	if (bLongMsg)
+	else if(szSign[0]=='E')
 	{
-		if (pMsgContent[4] != pMsgContent[5])
-		{
-			//不是长短信的最后一条，不加签名
-			return FALSE;
-		}
-		iLongMsg = *(BYTE*)pSM->GetMsgContent()+1;
-	}
-	//得到编码格式
-	BYTE dcs = pSM->GetMsgFormat();
-	UC data_coding; 
-	if(dcs ==15)
-	{
-		data_coding = 15;
+		return pSM->AddSign(0,szSign+1,iLen-1)==0;
 	}
 	else
 	{
-		data_coding = dcs&0x0C;
-	}
-    char trueSendMsg[SHORT_MESSAGE_LEN+1];
-    memset(trueSendMsg,0, sizeof(trueSendMsg));
-    int dwSize=pSM->GetSMData()->SMLength;
-	int iMsgLe = dwSize;
-	CCodeAndDecode code;
-	if(8==data_coding || 24==data_coding)
-    {
-		if(bLongMsg == TRUE)
-		{
-			BYTE len = *(BYTE*)pSM->GetMsgContent()+1;
-			code.ConvertUCS2ToText(((UC*)pSM->GetMsgContent() + len), dwSize - len,trueSendMsg);
-		}
-		else
-		{
-			code.ConvertUCS2ToText((UC*)pSM->GetMsgContent(),dwSize,trueSendMsg);
-		}
-		
-    }
-    else if(1==data_coding)
-    {
-        memcpy(trueSendMsg,pSM->GetMsgContent(),dwSize);
-    }
-    else
-    {
-        memcpy(trueSendMsg,pSM->GetMsgContent(),dwSize);
-    }    
-	//end updated by hyh 2012-4-9
-	char sTemp[500];
-	memset(sTemp, 0, 500);
-
-	int iSignLen = strlen(szSign);
-	int iMsgLen = strlen(trueSendMsg);
-	if (szSign == NULL || iLen == 0 || iSignLen == 0 || trueSendMsg == NULL || iMsgLen == 0)
-	{
-		return FALSE;
-	}	
-	
-	strcpy(sTemp, trueSendMsg);
-
-	//将签名加入消息内容尾部
-	//strncat(sTemp, szSign, iSignLen);
-
-	if(bLongMsg == TRUE)
-	{
-			//将签名加入消息内容尾部
-		if(szSign[0]=='H'||szSign[0]=='E')
-			strncat(sTemp, szSign+1, iSignLen-1);
-		else
-			strncat(sTemp, szSign, iSignLen);		
-	
-	}
-	else
-	{
-		if(szSign[0]=='H')
-		{
-			//将签名加入消息内容头部
-			sprintf(sTemp,"%s%s",szSign+1,trueSendMsg);
-		}
-		else if(szSign[0]=='E')
-		{
-			//将签名加入消息内容尾部
-			strncat(sTemp, szSign+1, iSignLen-1);
-		}
-		else
-		{
-			//将签名加入消息内容尾部
-			strncat(sTemp, szSign, iSignLen);
-		}
+		return pSM->AddSign(0,szSign,iLen)==0;
 	}
 
+	return FALSE;
 
-	//最大消息长度140字节，如果消息内容+签名>140，则截掉部分签名
-	sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140 - iLongMsg] = 0x00;
+	//if(pSM->m_wlongmsg.size())
+	//{
+	//	//CCodeAndDecode code;
+	//	//std::wstring wzSign = code.ConvertStringToWString(szSign);
 
-	if (sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-1] < 0 && sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-2] > 0)
-	{
-		//防止乱码
-		sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-1] = ' ';
-	}	
+	//	if(szSign[0]=='H')
+	//	{
+	//		//将签名加入消息内容头部
+	//		CCodeAndDecode code;
+	//		std::wstring wzSign = code.ConvertStringToWString(szSign+1);
+	//		//sprintf(sTemp,"%s%s",szSign+1,trueSendMsg);
+	//		pSM->m_wlongmsg = wzSign+pSM->m_wlongmsg;
 
-	iMsgLe = strlen(sTemp);
-	if(8==data_coding || 24==data_coding)
-    {
-		if(bLongMsg == TRUE)
-		{
-			US sm_length=0;
-			code.ConvertTextToUCS2(sTemp,(UC*)pSM->GetMsgContent() + iLongMsg,sm_length);
-			iMsgLe = sm_length + iLongMsg;
+	//	}
+	//	else if(szSign[0]=='E')
+	//	{
+	//		//将签名加入消息内容尾部
+	//		CCodeAndDecode code;
+	//		std::wstring wzSign = code.ConvertStringToWString(szSign+1);
+	//		//strncat(sTemp, szSign+1, iSignLen-1);
+	//		pSM->m_wlongmsg += wzSign;
+	//	}
+	//	else
+	//	{
+	//		//将签名加入消息内容尾部
+	//		//strncat(sTemp, szSign, iSignLen);
+	//		CCodeAndDecode code;
+	//		std::wstring wzSign = code.ConvertStringToWString(szSign);
+	//		pSM->m_wlongmsg += wzSign;
+	//	}
 
-			//Temp by hyh 2012-4-16
-			code.ConvertUCS2ToText(((UC*)pSM->GetMsgContent() + iLongMsg), sm_length,trueSendMsg);
-			CString strLog;
-			strLog.Format("长短信加签名后[%s][%s][%s][%d]",
-				pSM->GetDestAddr(),pSM->GetOrgAddr(),trueSendMsg, iMsgLe);			
-			GetSmsApp()->WriteTestRecord(strLog,5);
-			//End Temp by hyh 2012-4-16			
-		}
-		else
-		{		
-			memset(pSM->GetMsgContent(),0,sizeof(pSM->GetMsgContent()));
-			US sm_length=0;
-			code.ConvertTextToUCS2(sTemp,(UC*)pSM->GetMsgContent(),sm_length);
-			iMsgLe = sm_length;
-		}
-    }
-    else
-    {
-		memset(pSM->GetMsgContent(),0,sizeof(pSM->GetMsgContent()));
-		memcpy(pSM->GetMsgContent(),sTemp,iMsgLe);
-    }
-	
-	if (iMsgLe < 256)
-	{
-		pSM->GetSMData()->SMLength = iMsgLe;
-		dwSize=pSM->GetSMData()->SMLength;
-	}
-	else
-	{
-		CString strLog;
-		strLog.Format("加签名后消息长度超过255[%s][%s][%s][%d]",
-			pSM->GetDestAddr(),pSM->GetOrgAddr(),sTemp, iMsgLe);
-		
-		GetSmsApp()->WriteTestRecord(strLog,0);
-	} 
 
-	return TRUE;
+	//	return true;
+	//}
+
+
+	////updated by hyh begin  2012-4-9
+	////长短信
+	//BOOL	bLongMsg = IsLongMsg(pSM);
+	//char* pMsgContent = pSM->GetMsgContent();
+	//int iLongMsg = 0;
+	//if (bLongMsg)
+	//{
+	//	if (pMsgContent[4] != pMsgContent[5])
+	//	{
+	//		//不是长短信的最后一条，不加签名
+	//		return FALSE;
+	//	}
+	//	iLongMsg = *(BYTE*)pSM->GetMsgContent()+1;
+	//}
+	////得到编码格式
+	//BYTE dcs = pSM->GetMsgFormat();
+	//UC data_coding; 
+	//if(dcs ==15)
+	//{
+	//	data_coding = 15;
+	//}
+	//else
+	//{
+	//	data_coding = dcs&0x0C;
+	//}
+ //   char trueSendMsg[SHORT_MESSAGE_LEN+1];
+ //   memset(trueSendMsg,0, sizeof(trueSendMsg));
+ //   int dwSize=pSM->GetSMData()->SMLength;
+	//int iMsgLe = dwSize;
+	//CCodeAndDecode code;
+	//if(8==data_coding || 24==data_coding)
+ //   {
+	//	if(bLongMsg == TRUE)
+	//	{
+	//		BYTE len = *(BYTE*)pSM->GetMsgContent()+1;
+	//		code.ConvertUCS2ToText(((UC*)pSM->GetMsgContent() + len), dwSize - len,trueSendMsg);
+	//	}
+	//	else
+	//	{
+	//		code.ConvertUCS2ToText((UC*)pSM->GetMsgContent(),dwSize,trueSendMsg);
+	//	}
+	//	
+ //   }
+ //   else if(1==data_coding)
+ //   {
+ //       memcpy(trueSendMsg,pSM->GetMsgContent(),dwSize);
+ //   }
+ //   else
+ //   {
+ //       memcpy(trueSendMsg,pSM->GetMsgContent(),dwSize);
+ //   }    
+	////end updated by hyh 2012-4-9
+	//char sTemp[500];
+	//memset(sTemp, 0, 500);
+
+	//int iSignLen = strlen(szSign);
+	//int iMsgLen = strlen(trueSendMsg);
+	//if (szSign == NULL || iLen == 0 || iSignLen == 0 || trueSendMsg == NULL || iMsgLen == 0)
+	//{
+	//	return FALSE;
+	//}	
+	//
+	//strcpy(sTemp, trueSendMsg);
+
+	////将签名加入消息内容尾部
+	////strncat(sTemp, szSign, iSignLen);
+
+	//if(bLongMsg == TRUE)
+	//{
+	//		//将签名加入消息内容尾部
+	//	if(szSign[0]=='H'||szSign[0]=='E')
+	//		strncat(sTemp, szSign+1, iSignLen-1);
+	//	else
+	//		strncat(sTemp, szSign, iSignLen);		
+	//
+	//}
+	//else
+	//{
+	//	if(szSign[0]=='H')
+	//	{
+	//		//将签名加入消息内容头部
+	//		sprintf(sTemp,"%s%s",szSign+1,trueSendMsg);
+	//	}
+	//	else if(szSign[0]=='E')
+	//	{
+	//		//将签名加入消息内容尾部
+	//		strncat(sTemp, szSign+1, iSignLen-1);
+	//	}
+	//	else
+	//	{
+	//		//将签名加入消息内容尾部
+	//		strncat(sTemp, szSign, iSignLen);
+	//	}
+	//}
+
+
+	////最大消息长度140字节，如果消息内容+签名>140，则截掉部分签名
+	//sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140 - iLongMsg] = 0x00;
+
+	//if (sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-1] < 0 && sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-2] > 0)
+	//{
+	//	//防止乱码
+	//	sTemp[SMGP_OCT_SHORT_MESSAGE_LEN_140-1] = ' ';
+	//}	
+
+	//iMsgLe = strlen(sTemp);
+	//if(8==data_coding || 24==data_coding)
+ //   {
+	//	if(bLongMsg == TRUE)
+	//	{
+	//		US sm_length=0;
+	//		code.ConvertTextToUCS2(sTemp,(UC*)pSM->GetMsgContent() + iLongMsg,sm_length);
+	//		iMsgLe = sm_length + iLongMsg;
+
+	//		//Temp by hyh 2012-4-16
+	//		code.ConvertUCS2ToText(((UC*)pSM->GetMsgContent() + iLongMsg), sm_length,trueSendMsg);
+	//		CString strLog;
+	//		strLog.Format("长短信加签名后[%s][%s][%s][%d]",
+	//			pSM->GetDestAddr(),pSM->GetOrgAddr(),trueSendMsg, iMsgLe);			
+	//		GetSmsApp()->WriteTestRecord(strLog,5);
+	//		//End Temp by hyh 2012-4-16			
+	//	}
+	//	else
+	//	{		
+	//		memset(pSM->GetMsgContent(),0,sizeof(pSM->GetMsgContent()));
+	//		US sm_length=0;
+	//		code.ConvertTextToUCS2(sTemp,(UC*)pSM->GetMsgContent(),sm_length);
+	//		iMsgLe = sm_length;
+	//	}
+ //   }
+ //   else
+ //   {
+	//	memset(pSM->GetMsgContent(),0,sizeof(pSM->GetMsgContent()));
+	//	memcpy(pSM->GetMsgContent(),sTemp,iMsgLe);
+ //   }
+	//
+	//if (iMsgLe < 256)
+	//{
+	//	pSM->GetSMData()->SMLength = iMsgLe;
+	//	dwSize=pSM->GetSMData()->SMLength;
+	//}
+	//else
+	//{
+	//	CString strLog;
+	//	strLog.Format("加签名后消息长度超过255[%s][%s][%s][%d]",
+	//		pSM->GetDestAddr(),pSM->GetOrgAddr(),sTemp, iMsgLe);
+	//	
+	//	GetSmsApp()->WriteTestRecord(strLog,0);
+	//} 
+
+	//return TRUE;
 }
 //end updated by hyh 2011-12-9
 
@@ -17031,7 +17153,7 @@ void CServiceMng::SetSPID(CService *pSrcIF, CConnPoint *pSrcAccount, CShortMsg *
 					pNewMsg->SetCPID(CPID);
 					CString strLog;
 					strLog.Format("SetSPID:AccountName[%s],CPID[%s]",
-									pSrcAccount->GetName(),strCPID);
+									pSrcAccount->GetName(),(LPCTSTR)strCPID);
 					GetSmsApp()->WriteTestRecord((LPCSTR)strLog, 1);
 				}			
 			}
@@ -18916,6 +19038,30 @@ int CServiceMng::SendMsg(CShortMsg* pSendSM)
 	//end add
 
 
+	auto plong = dynamic_cast<LONGSM::Clongsmdata<CShortMsg>*>(pSendSM);
+	if(plong)
+	{
+		auto v = plong->GetAllSubSM();
+
+		for(int i = 0;i<v.size();i++)
+		{
+
+			char LocalFwdMsgid[26];
+			memset(LocalFwdMsgid, 0, sizeof(LocalFwdMsgid));
+			MakeLocalFwdMsgid(v[i]->GetSmid(), (char*)(LPCSTR)GetLocalSMGNO(pSendAccount), LocalFwdMsgid, 23);	
+			//设置LocalFwdMsgid
+			v[i]->SetLocalFwdMsgid(LocalFwdMsgid);
+
+			auto r = pSendAccount->GetScheduleQue()->SubmitSM(v[i], v[i]->GetPriority());
+			if(r!=0)
+			{
+				LOG(WARNING)<<"send fail account["<<pSendAccount->GetName()<<"] id=["<<v[i]->GetSmid()<<"] ret="<<r;
+				delete v[i];
+			}
+		}
+		delete plong;
+		return 0;
+	}
 
 	if(pSendSM->m_wlongmsg.size()>0)
 	{

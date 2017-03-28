@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\glog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\gflags\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\liblog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>..\..\glog\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\gflags\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\liblog\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+  
+ <Target Name="liblog output to dest" AfterTargets="AfterBuild"> 
+    <!-- <Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\lib\libglog.pdb"
+          DestinationFiles="$(TargetDir)libglog.pdb"
+          SkipUnchangedFiles="true" />
+			-->
+	<Copy 
+          SourceFiles="$(ProjectDir)..\..\gflags\lib\gflags.lib"
+          DestinationFiles="$(TargetDir)gflags.lib"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying gflag.lib -&gt; $(TargetDir)gflag.lib." Importance="high"/>
+ 		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\gflags\lib\gflags.dll"
+          DestinationFiles="$(TargetDir)gflags.dll"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying gflag.dll -&gt; $(TargetDir)gflag.dll." Importance="high"/>    
+	<Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\lib\glog.lib"
+          DestinationFiles="$(TargetDir)glog.lib"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying glog.lib -&gt; $(TargetDir)glog.lib." Importance="high"/>
+ 		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\glog\bin\glog.dll"
+          DestinationFiles="$(TargetDir)glog.dll"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying glog.dll -&gt; $(TargetDir)glog.dll." Importance="high"/>
+     <Copy 
+          SourceFiles="$(ProjectDir)..\..\liblog\lib\liblog.pdb"
+          DestinationFiles="$(TargetDir)liblog.pdb"
+          SkipUnchangedFiles="true" />		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\liblog\lib\liblog.lib"
+          DestinationFiles="$(TargetDir)liblog.lib"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying liblog.lib -&gt; $(TargetDir)liblog.lib." Importance="high"/>
+		  
+    <Copy 
+          SourceFiles="$(ProjectDir)..\..\liblog\lib\liblog.dll"
+          DestinationFiles="$(TargetDir)liblog.dll"
+          SkipUnchangedFiles="true" />
+	<Message Text="Copying liblog.dll -&gt; $(TargetDir)liblog.lib." Importance="high"/>
+
+		  
+</Target>
+
+</Project>

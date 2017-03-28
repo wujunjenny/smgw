@@ -44,9 +44,9 @@ void CCacheConfigPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CCacheConfigPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CCacheConfigPage)
-	ON_EN_CHANGE(IDC_MAXFILECACHESMCOUNT, OnChangeMaxfilecachesmcount)
-	ON_BN_CLICKED(IDC_FILECACHEONOFF, OnFilecacheonoff)
-	ON_EN_CHANGE(IDC_WAITQUETIMEOUT, OnChangeWaitquetimeout)
+	ON_EN_CHANGE(IDC_MAXFILECACHESMCOUNT, &CCacheConfigPage::OnChangeMaxfilecachesmcount)
+	ON_BN_CLICKED(IDC_FILECACHEONOFF, &CCacheConfigPage::OnFilecacheonoff)
+	ON_EN_CHANGE(IDC_WAITQUETIMEOUT, &CCacheConfigPage::OnChangeWaitquetimeout)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

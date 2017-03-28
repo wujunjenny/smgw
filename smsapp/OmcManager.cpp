@@ -986,7 +986,7 @@ int OmcManager::SetInterfaces(CConnPoint* pAccount,rapidjson::Value& reader,rapi
 						{
 							CString str;
 							str.Format("%08s", AccountName);
-							sprintf(AccountName, "%s", str);
+							sprintf(AccountName, "%s", (LPCTSTR)str);
 						}
 						CSmgpService* pSmcIF = new CSmgpService(pAccount,codetype, \
 						drvtype, remoteaddr.c_str(), \
@@ -1438,7 +1438,7 @@ int OmcManager::SubmitSM(HttpRequest& req,HttpResponse& rsp,HANDLE hSession,HAND
 	const char* gwname = GetSmsApp()->GetEnvironment()->GetModuleName();
 	pNewMsg->SetSourceGwName(gwname);
 
-	pNewMsg->m_bFromHttp = true;
+	//pNewMsg->m_bFromHttp = true;
 	//获取目的号码
 	auto itr_DestAddr = reader.FindMember("DestAddr");
 	//获取主教号码
@@ -1502,7 +1502,8 @@ int OmcManager::SubmitSM(HttpRequest& req,HttpResponse& rsp,HANDLE hSession,HAND
 	std::wstring wcontent;
 	std::string scontent;
 	try {
-	 wcontent =  code.ConvertUTF8ToWString( std::string(itr_content->value.GetString()));
+     std::string str = itr_content->value.GetString();
+	 wcontent =  code.ConvertUTF8ToWString( str/*std::string(itr_content->value.GetString())*/);
 	}
 	catch(std::range_error e)
 	{
@@ -1611,7 +1612,7 @@ int OmcManager::SubmitSM(HttpRequest& req,HttpResponse& rsp,HANDLE hSession,HAND
 
 
 
-	extern unsigned long int g_RecvSMCount;
+	extern long int g_RecvSMCount;
 	//接收消息计数
 	g_RecvSMCount++;
 	pSrcAccount->m_FlowStat.dwRecvSMCount++;  

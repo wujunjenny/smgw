@@ -29,7 +29,7 @@ struct struCheckInfo
 		byCheckType = CKT_USER;
 		byUserCheck = USERCHECK_NO;
 	}
-	void operator = (struCheckInfo& check)
+	void operator = (const struCheckInfo& check)
 	{
 		byCheckType = check.byCheckType;
 		byUserCheck = check.byUserCheck;
@@ -40,7 +40,7 @@ struct struCheckInfos
 {
 	struCheckInfo 	 OrgCheckInfo; //主叫鉴权信息
 	struCheckInfo 	 DestCheckInfo; //被叫鉴权信息
-	void operator = (struCheckInfos& check)
+	void operator = (const struCheckInfos& check)
 	{
 		OrgCheckInfo = check.OrgCheckInfo;
 		DestCheckInfo = check.DestCheckInfo;
@@ -226,6 +226,8 @@ enum E_ERROR_MSG
 	E_REPEATFEEMONTH			=	577,		//重复包月扣费消息
 	E_NOTACTIVEFEEMONTHMSG		=	578,		//发送包月扣费消息之前未激活用户
 	E_CHECKTYPEERR				=   579,
+	E_LONGSM_PARAM_ERRO			=   580,		//long sm param error
+
     E_ERROR_FILTER				=	600,		//过滤禁止错误ACK
 	E_ERROR_CPSTATUS_STOP		=	601,		//CP业务没有运行
 	E_ACCOUNT_NOT_SERVICE		=	602,		//帐号不是内部业务中心模块或业务中心模块

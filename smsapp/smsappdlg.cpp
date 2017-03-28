@@ -22,49 +22,49 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
-extern unsigned long int g_SendSMCount;
-extern unsigned long int g_RecvAckCount;
-extern unsigned long int g_RecvSucAckCount;
-extern unsigned long int g_RecvFailAckCount;
-extern unsigned long int g_RecvAbnorAckCount;
-extern unsigned long int g_WaitQueCount;
-extern unsigned long int g_SendSucCount;
-extern unsigned long int g_SendFailCount;
+extern  long int g_SendSMCount;
+extern  long int g_RecvAckCount;
+extern  long int g_RecvSucAckCount;
+extern  long int g_RecvFailAckCount;
+extern  long int g_RecvAbnorAckCount;
+extern  long int g_WaitQueCount;
+extern  long int g_SendSucCount;
+extern  long int g_SendFailCount;
 
 //***SMGW35-12, 2004-09-28,jdz modi begin***//
-extern unsigned long int g_SendQueCount;
-extern unsigned long int g_FileCacheCount;
+extern  long int g_SendQueCount;
+extern  long int g_FileCacheCount;
 //***SMGW35-12, 2004-09-28,jdz modi end***//
 
-extern unsigned long int g_SubmitCount;
-extern unsigned long int g_RecvSMCount;
-extern unsigned long int g_RecvReportCount;
-extern unsigned long int g_RecvSucReportCount;
-extern unsigned long int g_RecvFailReportCount;
+extern  long int g_SubmitCount;
+extern  long int g_RecvSMCount;
+extern  long int g_RecvReportCount;
+extern  long int g_RecvSucReportCount;
+extern  long int g_RecvFailReportCount;
 
 //***smgw25-14, 2004-03-23, jdz, change begin***// for 发送状态报告计数
 extern struct DestAddrFlowStat g_DestAddrFlow;
-extern unsigned long int g_SendSucAckCount;
-extern unsigned long int g_SendFailAckCount;
-extern unsigned long int g_SendReportCount;
+extern  long int g_SendSucAckCount;
+extern  long int g_SendFailAckCount;
+extern  long int g_SendReportCount;
 //extern int g_SendSucReportCount;
 //extern int g_SendFailReportCount;
-extern unsigned long int g_SucReportSendCount;
-extern unsigned long int g_FailReportSendCount;
+extern  long int g_SucReportSendCount;
+extern  long int g_FailReportSendCount;
 
 
-extern unsigned long int g_AckErrReSubmitCount;
+extern  long int g_AckErrReSubmitCount;
 //extern int g_ReSubmitCount;
-extern unsigned long int g_AckOutReSubmitCount;
+extern  long int g_AckOutReSubmitCount;
 extern int g_ReSendFlag;
 //==============
 //***smgw25-14, 2004-03-23, jdz, change end***// 
 
 //***SMGW40-01, 2004-12-3, jdz, add begin***//
-extern unsigned long int g_SendAuthReqCount;
-extern unsigned long int g_RcvAuthReqAckCount;
-extern unsigned long int g_SendAuthCnfmCount;
-extern unsigned long int g_RcvAuthCnfmAckCount;
+extern  long int g_SendAuthReqCount;
+extern  long int g_RcvAuthReqAckCount;
+extern  long int g_SendAuthCnfmCount;
+extern  long int g_RcvAuthCnfmAckCount;
 //***SMGW40-01, 2004-12-3, jdz, add end***//
 
 
@@ -143,16 +143,16 @@ BEGIN_MESSAGE_MAP(CSmsAppDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
-	ON_BN_CLICKED(ID_CLEAR, OnClear)
-	ON_BN_CLICKED(IDC_B_OpenDbgView, OnBOpenDbgView)
+	ON_BN_CLICKED(ID_CLEAR, &CSmsAppDlg::OnClear)
+	ON_BN_CLICKED(IDC_B_OpenDbgView, &CSmsAppDlg::OnBOpenDbgView)
 	//ON_BN_CLICKED(IDC_BUTTON1, OnButton1)
 	ON_WM_CLOSE()
-	ON_BN_CLICKED(IDC_ACCOUNTFLOW, OnAccountflow)
-	ON_BN_CLICKED(IDC_CONFIG, OnConfigDlg)
-	ON_BN_CLICKED(IDC_LOADPREPAY, OnLoadPrePay)
-	ON_BN_CLICKED(IDC_QUERY_USERFEETYPE, OnQueryUserFeeType)
-	ON_BN_CLICKED(IDC_BTNDebug, OnBtnDebug)
-	ON_BN_CLICKED(IDC_BUTTON_HTTP, OnBnClickedButtonHttp)
+	ON_BN_CLICKED(IDC_ACCOUNTFLOW, &CSmsAppDlg::OnAccountflow)
+	ON_BN_CLICKED(IDC_CONFIG, &CSmsAppDlg::OnConfigDlg)
+	ON_BN_CLICKED(IDC_LOADPREPAY, &CSmsAppDlg::OnLoadPrePay)
+	ON_BN_CLICKED(IDC_QUERY_USERFEETYPE, &CSmsAppDlg::OnQueryUserFeeType)
+	ON_BN_CLICKED(IDC_BTNDebug, &CSmsAppDlg::OnBtnDebug)
+	ON_BN_CLICKED(IDC_BUTTON_HTTP, &CSmsAppDlg::OnBnClickedButtonHttp)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LOADSERVICETABLE, &CSmsAppDlg::OnBnClickedButtonLoadservicetable)
 END_MESSAGE_MAP()
@@ -172,7 +172,7 @@ BOOL CSmsAppDlg::OnInitDialog()
 	{
 		//配置中非空时创建
 		CString RemoteGWCachePath;
-		RemoteGWCachePath.Format("%s\\%s", RemoteGWPath, CACHE_FOLDER);
+		RemoteGWCachePath.Format("%s\\%s", (LPCTSTR)RemoteGWPath, (LPCTSTR)CACHE_FOLDER);
 		if(!PathFileExists(RemoteGWCachePath))
 			CreateDirectory(RemoteGWCachePath, NULL);
 	}
@@ -338,6 +338,7 @@ void CSmsAppDlg::OnTimer(UINT nIDEvent)
 	// TODO: Add your message handler code here and/or call default
 	if(nIDEvent == 100)
 	{
+		::flushlog();
 		//SMGW43-12, 2005-9-21, wzy, add begin//
 		GetSmsApp()->MoveTmpConsoleLog(false);
 		//SMGW43-12, 2005-9-21, wzy, add end//

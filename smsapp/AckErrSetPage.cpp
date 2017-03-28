@@ -49,9 +49,9 @@ void CAckErrSetPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAckErrSetPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CAckErrSetPage)
-	ON_BN_CLICKED(IDC_ADDNEW, OnAddnew)
-	ON_BN_CLICKED(IDC_DEL, OnDel)
-	ON_BN_CLICKED(IDC_ACKERRRESENDCHECK, OnAckerrresendcheck)
+	ON_BN_CLICKED(IDC_ADDNEW, &CAckErrSetPage::OnAddnew)
+	ON_BN_CLICKED(IDC_DEL, &CAckErrSetPage::OnDel)
+	ON_BN_CLICKED(IDC_ACKERRRESENDCHECK, &CAckErrSetPage::OnAckerrresendcheck)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -75,7 +75,7 @@ void CAckErrSetPage::OnAddnew()
 			AfxMessageBox("请填全信息");
 			return;
 		}
-		sNewString.Format("%s     %s%s次",m_sErrorNo,sSelString,m_sCount);
+		sNewString.Format("%s     %s%s次",(LPCTSTR)m_sErrorNo,(LPCTSTR)sSelString,(LPCTSTR)m_sCount);
         GetSmsApp()->GetIFMng()->GetAckError()->Add(nType,m_sErrorNo,m_sCount);  
 	}
 	else 
@@ -86,7 +86,7 @@ void CAckErrSetPage::OnAddnew()
 			return;
 		}
 		
-   		sNewString.Format("%s     %s",m_sErrorNo,sSelString);
+   		sNewString.Format("%s     %s",(LPCTSTR)m_sErrorNo,(LPCTSTR)sSelString);
 		GetSmsApp()->GetIFMng()->GetAckError()->Add(nType,m_sErrorNo,"");  
 	}
     

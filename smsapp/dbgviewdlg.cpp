@@ -35,8 +35,8 @@ void CDbgViewDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDbgViewDlg, CDialog)
 	//{{AFX_MSG_MAP(CDbgViewDlg)
-	ON_BN_CLICKED(ID_B_Refresh, OnBRefresh)
-	ON_BN_CLICKED(IDC_SETNULL, OnSetnull)
+	ON_BN_CLICKED(ID_B_Refresh, &CDbgViewDlg::OnBRefresh)
+	ON_BN_CLICKED(IDC_SETNULL, &CDbgViewDlg::OnSetnull)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

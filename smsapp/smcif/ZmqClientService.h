@@ -70,10 +70,31 @@ class CZmqThread : public CThread
 		time_t last_req_time;
 		std::vector<LPVOID> req_msgs;
 	};
+
+	struct long_shortmsg
+	{
+		std::string key;
+		int index;
+		time_t start_time;
+		int total;
+		std::list<LPVOID> msgs;		
+	};
 public:
 	CZmqThread(CZmqClientService* pOwner);
 protected:
 	virtual int Run(DWORD param);
+
+	static const char* GetStatusStr(int status) 
+	{
+		static char* info[] = {"STATE_IDLE","STATE_REQ","STATE_COMMAND"};
+		return info[status];
+	};
+	static const char* GetActiveStr(int active) 
+	{
+		static char* info[] = {"SOCK_ACTIVE","SOCK_DEACTIVE","SOCK_BUSY"};
+		return info[active];
+		//return "UNKNOWN";
+	};
 
 	int Init();
 	int Destroy();
@@ -83,6 +104,8 @@ protected:
 	int ClearData(proxy_socket_data* env);
 	int RollbackData(proxy_socket_data* env);
 
+	int PollMsg(std::vector<LPVOID> &req_msgs,int ncount);
+
 	static int proxy_read_event (zloop_t *loop, zsock_t *reader, void *arg);
 	static int time_event_for_shakehand (zloop_t *loop, int timer_id, void *arg);
 	static int time_event_for_trysend (zloop_t *loop, int timer_id, void *arg);
@@ -91,6 +114,12 @@ protected:
 	CZmqClientService* m_pOwner;
 	zloop_t * m_loop;
 	proxy_socket_data m_sock_array[MAX_SOCK_SZIE];
+
+	int m_longsm_index;
+	std::unordered_map<std::string,std::shared_ptr<long_shortmsg>> m_longsm_table;
+	std::list<std::weak_ptr<long_shortmsg>> m_longsm_timer_index;
+	int package_longsm(LPVOID pmsg,std::list<LPVOID>& outmsgs);//insert a longsm item , get complete msg by outmsgs
+	int check_timeout_longsm(std::list<LPVOID>& outmsgs);
 
 };
 
@@ -120,6 +149,17 @@ class CZmqRcvThread : public CThread
 	};
 public:
 	CZmqRcvThread(CZmqClientService* pOwner);
+	static const char* GetStatusStr(int status) 
+	{
+		static char* info[] = {"STATE_IDLE","STATE_BUSY"};
+		return info[status];
+	};
+	static const char* GetActiveStr(int active) 
+	{
+		static char* info[] = {"SOCK_ACTIVE","SOCK_DEACTIVE"};
+		return info[active];
+		//return "UNKNOWN";
+	};
 protected:
 	virtual int Run(DWORD param);
 

@@ -385,6 +385,26 @@ BOOL CEnvironment::LoadIFMngConfig(void)
 	m_bResponseFirst = atoi(pBuff);
 	// end add
 
+
+	//add by wj for LSM SETTING
+    Ret = GetPrivateProfileString("LSM",
+		"timeout",
+		"",
+		pBuff,
+		sizeof(pBuff),
+		m_IniFileName);
+    if(Ret == 0)
+	{
+		ASSERT(0);
+		strcpy(pBuff, "100");
+		WritePrivateProfileString("LSM",
+		"timeout",
+		pBuff,
+		m_IniFileName);
+	}
+	m_nLSM_timeout = atoi(pBuff);
+	// end add
+
     Ret = GetPrivateProfileString("SMSEXTEND",
 		"ServiceUp",
 		"",

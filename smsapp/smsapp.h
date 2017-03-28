@@ -18,7 +18,8 @@
 // CSmsAppApp:
 // See SmsApp.cpp for the implementation of this class
 
-
+//
+#include "log.h"
 #include "Environment.h"
 #include "OMCServer.h"
 #include "ShareMemManager.h"
@@ -29,6 +30,9 @@
 #include "ContentFilter.h"
 #include "AlarmHandMsgProc.h"
 #include "PrePayAddrTable.h"
+//#define GLOG_NO_ABBREVIATED_SEVERITIES
+//#include "glog\logging.h"
+
 
 class CServiceMng;
 

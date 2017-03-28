@@ -1,0 +1,95 @@
+// [START declaration]
+syntax = "proto3";
+package sm;
+// [END declaration]
+ 
+
+// [START messages]
+
+// base shortmessage
+message basedata{
+   string sndaddr = 1;					//addr send from
+   int32 sndton = 2 ;
+   int32 sndnpi = 3 ;
+   string rcvaddr = 4;					//addr send to
+   int32 rcvton = 5;
+   int32 rcvnpi = 6;
+   int32 ems_class = 7;
+   int32 pri = 8;
+   int32 pid = 9;
+   string scheduletime = 10;
+   string expiretime = 11;
+   int32 reporttype = 12;
+   int32 dcs = 13;  
+   bytes content = 14;
+}
+
+//tlv ext 
+message tlv
+{
+	int32 tlv_type = 1;
+	oneof value{
+		int32 ivalue = 2;
+		string svalue = 3;
+		bytes bvalue = 4;
+	}
+}
+
+
+message longsm
+{
+	map<string,bytes> subcontents = 1;				//saved     pairs  of   submsg_id    ,  submsg_content
+}
+
+message httplongsm
+{
+	bytes longcontent = 1;
+	repeated string subids = 2;
+}
+
+
+
+message gw_shortmsg
+{
+  
+  basedata  smdata = 20;
+  repeated tlv tlvs = 21;
+  
+  oneof lsm {
+ 
+	longsm subsms= 22;
+	httplongsm supersms= 23;  
+  } 
+  
+  //status data
+  int32 reply_end = 40 ;
+  int32 step = 41;
+  int32 snd_count = 42;
+  int32 snd_flag = 43;
+  int64 submit_time = 44;
+  int32 cmd = 45;
+  int32 snd_cmd = 46;
+  int32 snd_seq = 47;
+  int32 snd_id = 48;							//send_if_id
+  int32 rcv_id = 49;
+  
+  
+  //record data
+  string org_orgaddr = 50;						//saved org  orgaddr
+  string org_destaddr = 51;						//saved org  destaddr
+  string org_feeaddr = 52;
+  string org_servicecode = 53;
+  string org_spcode = 54;
+  string dst_orgaddr = 55;						//saved   last   orgaddr value  to send
+  string dst_destaddr = 56;						//saved   last   destaddr value to send
+  string dst_servicecode = 57;
+  string dst_spcode = 58;
+  string src_ip = 59;
+  int32 src_codetype = 60;
+}
+
+
+
+
+
+// [END messages]

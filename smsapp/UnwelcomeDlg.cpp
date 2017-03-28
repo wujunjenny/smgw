@@ -38,8 +38,8 @@ void CUnwelcomeDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CUnwelcomeDlg, CDialog)
 	//{{AFX_MSG_MAP(CUnwelcomeDlg)
-	ON_BN_CLICKED(IDC_ADD, OnAdd)
-	ON_BN_CLICKED(IDC_DEL, OnDel)
+	ON_BN_CLICKED(IDC_ADD, &CUnwelcomeDlg::OnAdd)
+	ON_BN_CLICKED(IDC_DEL, &CUnwelcomeDlg::OnDel)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

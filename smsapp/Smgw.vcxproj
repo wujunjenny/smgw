@@ -22,6 +22,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -35,10 +36,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
     <Import Project="ZeroMQ Common Settings.props" />
+    <Import Project="log.props" />
+    <Import Project="protobuf.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+    <Import Project="log.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -57,6 +61,8 @@
     <Linkage-czmq>dynamic</Linkage-czmq>
     <Linkage-libsodium>dynamic</Linkage-libsodium>
     <Linkage-libzmq>dynamic</Linkage-libzmq>
+    <GenerateManifest>true</GenerateManifest>
+    <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -115,16 +121,19 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>.;..\Common;..\DrvManager;IFMng;IDHead;..\DbDriver;CommServiceIF;UserCheck;Environment;SmcIF;OMCServer;TaskPool;UserMng;..\Alarmer;SMTABLE;..\md5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_NO_ICDCOMM_;__public_drvmanager__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_NO_ICDCOMM_;__public_drvmanager__;_CRT_SECURE_NO_WARNINGS;GFLAGS_IS_A_DLL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerOutput>AssemblyAndMachineCode</AssemblerOutput>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
-      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformation>false</BrowseInformation>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalOptions>/FI"StdAfx.h" %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -146,11 +155,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>winmm.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;Shlwapi.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateMapFile>true</GenerateMapFile>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -168,6 +179,7 @@
     <ClCompile Include="MobilePoolMng.cpp" />
     <ClCompile Include="MOHUTree.cpp" />
     <ClCompile Include="OmcManager.cpp" />
+    <ClCompile Include="shortmsg.pb.cc" />
     <ClCompile Include="smcif\cmppservice.cpp" />
     <ClCompile Include="cngpandsmpp.cpp" />
     <ClCompile Include="cngpservice.cpp" />
@@ -284,9 +296,11 @@
     <ClInclude Include="Cmppdef.h" />
     <ClInclude Include="HttpStatus.h" />
     <ClInclude Include="LogOption.h" />
+    <ClInclude Include="LongSMTable.h" />
     <ClInclude Include="MobilePoolMng.h" />
     <ClInclude Include="MOHUTree.h" />
     <ClInclude Include="OmcManager.h" />
+    <ClInclude Include="shortmsg.pb.h" />
     <ClInclude Include="smcif\cmppservice.h" />
     <ClInclude Include="cngpandsmpp.h" />
     <ClInclude Include="cngpdef.h" />
@@ -416,6 +430,11 @@
     <CustomBuild Include="res\work3.bmp" />
     <CustomBuild Include="res\work5.bmp" />
     <CustomBuild Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shortmsg.proto">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

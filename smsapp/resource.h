@@ -153,6 +153,7 @@
 #define IDC_DEL                         1117
 #define IDC_EDIT1                       1118
 #define IDC_USERNUM                     1118
+#define IDC_EDIT_LOG_LEVEL              1118
 #define IDC_LOGLEVEL                    1119
 #define IDC_REMOTEGWPATH                1121
 #define IDC_COMBO1                      1122
@@ -211,9 +212,15 @@
 #define IDC_STATIC_STATUS               5000
 #define IDC_PROPERTYGRID_RC             5001
 #define IDC_STATIC_DRV                  5002
-#define IDC_BUTTON3                     5003
 #define IDC_BUTTON_DUMP                 5003
+#define IDC_BUTTON_CONSOLE              5004
 #define IDC_QUERYUFT_RESULT             5005
+#define IDC_BUTTON_DUMP_MEMLEAK         5005
+#define IDC_BUTTON4                     5006
+#define IDC_BUTTON_MARKMEM              5006
+#define IDC_BUTTON_DUMP_V               5007
+#define IDC_BUTTON3                     5008
+#define IDC_BUTTON_LOG_RET              5008
 
 // Next default values for new objects
 // 
@@ -221,7 +228,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        3004
 #define _APS_NEXT_COMMAND_VALUE         4000
-#define _APS_NEXT_CONTROL_VALUE         5004
+#define _APS_NEXT_CONTROL_VALUE         5009
 #define _APS_NEXT_SYMED_VALUE           6000
 #endif
 #endif

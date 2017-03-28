@@ -38,7 +38,7 @@ void CQueryUFTDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CQueryUFTDlg, CDialog)
 	//{{AFX_MSG_MAP(CQueryUFTDlg)
-	ON_BN_CLICKED(IDC_QUERYUFT, OnQueryUFT)
+	ON_BN_CLICKED(IDC_QUERYUFT,&CQueryUFTDlg::OnQueryUFT)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -52,7 +52,7 @@ void CQueryUFTDlg::OnQueryUFT()
 	memset(pUserAddr, 0, sizeof(pUserAddr));
 	
 	UpdateData(TRUE) ;
-	sprintf(pUserAddr, "%s", m_strUserNum);
+	sprintf(pUserAddr, "%s", (LPCTSTR)m_strUserNum);
 
 	if (!m_strUserNum.GetLength())
 	{

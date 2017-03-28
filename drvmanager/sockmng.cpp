@@ -1077,7 +1077,10 @@ int CSockMng::StOnAccept(HANDLE hUser, HANDLE hFile, LPCTSTR pRemoteAddress,
 
 	if(!pThis->m_SockContral.Check(RemoteIP, (DWORD)ntohs(addr.sin_port)))
 	{
-		closesocket((SOCKET)hFile);
+		
+		VLOG(5)<<"closesocket ["<<std::dec<<(int)hFile<<"]";
+		if(hFile!=(HANDLE)INVALID_SOCKET)
+			closesocket((SOCKET)hFile);
 		return FALSE;
 	}
 
@@ -1099,7 +1102,9 @@ int CSockMng::StOnAccept(HANDLE hUser, HANDLE hFile, LPCTSTR pRemoteAddress,
 		pThis->m_SockContral.Decrease(RemoteIP, (DWORD)ntohs(addr.sin_port));
 		//end
 		ASSERT(0);
-		closesocket((SOCKET)hFile);
+		VLOG(5)<<"closesocket ["<<std::dec<<(int)hFile<<"]";
+		if(hFile!=(HANDLE)INVALID_SOCKET)
+			closesocket((SOCKET)hFile);
 		return FALSE;
 	};
 

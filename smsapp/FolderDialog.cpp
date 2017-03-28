@@ -14,7 +14,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-static int CALLBACK BrowseDirectoryCallback(
+int CALLBACK BrowseDirectoryCallback(
 				HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
 	// Context was pointer to CFolderDialog instance

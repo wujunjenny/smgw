@@ -45,12 +45,12 @@ void COtherConfigPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(COtherConfigPage, CPropertyPage)
 	//{{AFX_MSG_MAP(COtherConfigPage)
-	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
-	ON_EN_CHANGE(IDC_REMOTEGWPATH, OnChangeRemotegwpath)
-	ON_BN_CLICKED(IDC_FILTERRELOAD, OnFilterreload)
-	ON_BN_CLICKED(IDC_FILTERCHECK, OnFiltercheck)
-	ON_BN_CLICKED(IDC_SPMS_CHECK, OnSpmsCheck)
-	ON_BN_CLICKED(IDC_FEEMONTHMSG_CHECK, OnFeemonthmsgCheck)
+	ON_BN_CLICKED(IDC_BROWSE, &COtherConfigPage::OnBrowse)
+	ON_EN_CHANGE(IDC_REMOTEGWPATH, &COtherConfigPage::OnChangeRemotegwpath)
+	ON_BN_CLICKED(IDC_FILTERRELOAD, &COtherConfigPage::OnFilterreload)
+	ON_BN_CLICKED(IDC_FILTERCHECK, &COtherConfigPage::OnFiltercheck)
+	ON_BN_CLICKED(IDC_SPMS_CHECK, &COtherConfigPage::OnSpmsCheck)
+	ON_BN_CLICKED(IDC_FEEMONTHMSG_CHECK, &COtherConfigPage::OnFeemonthmsgCheck)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 

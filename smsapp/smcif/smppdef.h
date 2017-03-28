@@ -291,7 +291,7 @@ enum SMPP_State_Head
 typedef struct smpp_Message_header
 {
 	long int Command_Length;
-	long int Command_ID;
+	unsigned long	Command_ID;
 	long int Command_Status;
 	long int Sequence_No;
 } Message_header;

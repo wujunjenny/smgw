@@ -827,7 +827,7 @@ int CCngpAndSmpp::fnPutSubmitSm(char **cppDestBuff,int& nDestSize,char **cppOrgV
 	 }
 	 else
 	 {
-		 switch( UC(*tempValue) )
+		 switch( (UC)(*tempValue) )
 		 {
 		 case SMPP_NOFEE_TYPE_SM:	
 			 {		//免费消息
@@ -1137,7 +1137,7 @@ int CCngpAndSmpp::fnPutFwdSm(char **cppDestBuff,int& nDestSize,char **cppOrgVali
 	{
 		if(OrgMsgType == 8)	//是专门的扣费消息
 		{
-			switch( UC(*tempValue) )
+			switch( (UC)(*tempValue) )
 			{
 			case SMPP_ITEM_TYPE_SM:
 				{
@@ -1163,7 +1163,7 @@ int CCngpAndSmpp::fnPutFwdSm(char **cppDestBuff,int& nDestSize,char **cppOrgVali
 		}
 		else
 		{
-			switch( UC(*tempValue) )
+			switch( (UC)(*tempValue) )
 			{
 			case SMPP_NOFEE_TYPE_SM:
 				{
