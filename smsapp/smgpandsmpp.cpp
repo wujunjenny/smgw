@@ -4304,9 +4304,10 @@ int CSmgpAndSmpp::fnDecodeStatReport(Sm_Report* smppReport)
                 {
 					memcpy(smppReport->StateCode, "UNDELIV", 7);
                 }
+				memcpy(smppReport->ErrCode, "006", 3);
+
             }
 			
-			memcpy(smppReport->ErrCode, "006", 3);
         }
     }
 	else

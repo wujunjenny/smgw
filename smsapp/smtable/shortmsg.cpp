@@ -464,6 +464,12 @@ int CShortMsg::NewFromStream( const BYTE* pbyStream, const DWORD& dwLen)
 //add by wj
 CShortMsg::CShortMsg(sm::gw_shortmsg* pPB)
 {
+	memset(m_CalledNo, 0, sizeof(m_CalledNo));
+	memset(m_CallingNo, 0, sizeof(m_CallingNo));
+	m_cTlv = NULL;
+	m_DealStep = 0;
+	memset(m_FeeCallNo, 0, sizeof(m_FeeCallNo));
+
 	m_pSMData = new SM_STRUCT; 
 	memset(m_pSMData, 0, sizeof(SM_STRUCT));
 	
@@ -484,7 +490,7 @@ CShortMsg::CShortMsg(sm::gw_shortmsg* pPB)
 	//strncpy(m_pSMData->ScheduleTime,pPB->smdata().scheduletime().c_str(),sizeof(m_pSMData->ScheduleTime)-1);
 	COPY_FROM_STRING(m_pSMData->ScheduleTime,pPB->smdata().scheduletime());	
 	m_pSMData->SMLength = (std::min)((int)pPB->smdata().content().size(),(int)sizeof(m_pSMData->SMUD)-1);
-	memcpy(m_pSMData->SMUD,pPB->smdata().scheduletime().data(),m_pSMData->SMLength);
+	memcpy(m_pSMData->SMUD,pPB->smdata().content().data(),m_pSMData->SMLength);
 	m_pSMData->ReportType = pPB->smdata().reporttype();
 
 	this->m_bReturnFrist = pPB->reply_end();
@@ -504,7 +510,12 @@ CShortMsg::CShortMsg(sm::gw_shortmsg* pPB)
 	m_SendCmdID = pPB->snd_cmd();
 	m_ulCmdID = pPB->cmd();
 	m_nSubmitTime = pPB->submit_time();
-
+	m_sourcecodetype =pPB->src_codetype();
+	m_sourceipaddr = pPB->src_ip();
+	m_ulRecverID = pPB->rcv_id();
+	m_ulSenderID = pPB->snd_id();
+	m_ulSequenceID = pPB->snd_seq();
+	m_bSndToFee = false;
 	m_cTlv = new CTLV;
 	if(pPB->tlvs().size())
 	{	
@@ -564,15 +575,16 @@ sm::gw_shortmsg CShortMsg::GetPBPack()
 
 
 	pb.set_reply_end(m_bReturnFrist);
-	pb.set_org_orgaddr(m_CalledNo,strnlen(m_CalledNo,sizeof(m_CalledNo)-1));
+	pb.set_org_destaddr(m_CalledNo,strnlen(m_CalledNo,sizeof(m_CalledNo)-1));
 	pb.set_org_orgaddr(m_CallingNo,strnlen(m_CallingNo,sizeof(m_CallingNo)-1));
-	pb.set_org_orgaddr(m_FeeCallNo,strnlen(m_FeeCallNo,sizeof(m_FeeCallNo)-1));
+	pb.set_org_feeaddr(m_FeeCallNo,strnlen(m_FeeCallNo,sizeof(m_FeeCallNo)-1));
 	pb.set_org_servicecode(m_orgservicecode);
 	pb.set_org_spcode(m_orgspcode);
+	pb.set_src_codetype(m_sourcecodetype);
+	pb.set_src_ip(m_sourceipaddr);
 	pb.set_dst_destaddr(m_senddestaddr);
 	pb.set_dst_orgaddr(m_sendorgaddr);
 	pb.set_dst_servicecode(m_sendsevicecode);
-	pb.set_dst_spcode(m_sendsevicecode);
 	pb.set_dst_spcode(m_sendspcode);
 	pb.set_step(m_DealStep);
 	pb.set_cmd(m_ulCmdID);
@@ -3376,7 +3388,7 @@ int CShortMsg::AddSign(int head,const char* psign ,int len)
 		else
 		{
 			VLOG(5)<<"AddSign http msg at head";
-			m_wlongmsg = m_wlongmsg+wzSign;
+			m_wlongmsg = wzSign+m_wlongmsg;
 		}
 		return 0;
 	}
@@ -3874,6 +3886,22 @@ BOOL CShortMsg::FromStream( const BYTE* pbyStream, const DWORD& dwLen)
 	return true;
 }
 
+//
+bool CShortMsg::HasAuthErrCode(int* perro)
+{
+	if(m_cTlv)
+	{
+		DWORD len=0;
+		auto v = m_cTlv->GetItem(Tag_AuthErrCode,len);
+		if(v)
+		{
+			if(perro)
+				*perro = ntohl(*(u_long*)(v));
+			return true;
+		}
+	}
+	return false;
+}
 
 
 //»ñÈ¡¼øÈ¨´íÎóÂë

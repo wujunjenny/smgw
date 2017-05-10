@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\work\Libevent-master\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+     <AdditionalIncludeDirectories>C:\work\cevpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\work\Libevent-master\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>event.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+  <!-- Copy -->
+  <Target Name="event-link" AfterTargets="AfterBuild">
+    <Message Text="Copying event.dll -&gt; $(TargetDir)event.dll" Importance="high" />
+    <Copy SourceFiles="C:\work\Libevent-master\build\bin\Release\event.dll" DestinationFiles="$(TargetDir)event.dll" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="C:\work\Libevent-master\build\bin\Release\event_core.dll" DestinationFiles="$(TargetDir)event_core.dll" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="C:\work\Libevent-master\build\bin\Release\event_extra.dll" DestinationFiles="$(TargetDir)event_extra.dll" SkipUnchangedFiles="true" />
+  </Target>
+  <!-- Messages
+  <Target Name="redis-link" BeforeTargets="AfterBuild">
+    <Message Text="Copying libuv.dll -&gt; $(TargetDir)libuv.dll" Importance="high" />
+    <Message Text="Copying RedisApi.dll -&gt; $(TargetDir)RedisApi.dll" Importance="high" />
+  </Target>
+  -->
+</Project>

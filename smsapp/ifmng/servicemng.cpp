@@ -16,6 +16,7 @@
 #include "PToPDef.h"
 #include "ptopservice.h"
 #include "zmqClientService.h"
+#include "RedisService.h"
 #include "Cmppdef.h"
 #include <list>
 #include "OmcManager.h"
@@ -1366,7 +1367,10 @@ void CServiceMng::DeleteIFUsingID(UL IFID)
 	}
 	m_MapIFUsingID.RemoveKey(IFID);
 	
+
+    ::LeaveCriticalSection(&m_Lock);
 	pIF->Stop();
+    ::EnterCriticalSection(&m_Lock);
 
     //服务端
     Logout(pIF);
@@ -3011,8 +3015,13 @@ void CServiceMng::CheckError(CShortMsg* pShortMsg,	// 消息
 			}
 		}
 	}
-//gyx,标记fee做特殊处理	
-	pShortMsg->m_bReturnFrist = 2;
+//gyx,标记fee做特殊处理	changed by wj 
+	if(pShortMsg->m_bReturnFrist)
+	{
+		int autherr=0;
+		if(!pShortMsg->HasAuthErrCode(&autherr)||autherr!=0)
+				pShortMsg->m_bReturnFrist = 2;
+	}
 
 	if( !SendToFeeModule(pShortMsg, CheckErr) )
 	{
@@ -3058,6 +3067,7 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
 	CShortMsg  *pNewMsg = new CShortMsg(pMsg);
 	TRACE("<%s><%s><%d> new   [%x] \n",__FILE__,__FUNCTION__,__LINE__,pNewMsg);
 
+
     //去除主叫号码、被叫号码、计费号码前的86
 	Trim86(pNewMsg);
 
@@ -3065,6 +3075,9 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
 	CString SendName = pSrcAccount->GetName(); 
 	pNewMsg->SetSendAccount(SendName); 
 	
+	pNewMsg->m_sourceipaddr =pSrcIF->GetRemoteAddr();
+	pNewMsg->m_sourcecodetype = pSrcIF->GetCodeType();
+
 	//设置接收时间
 	COleDateTime mTime=COleDateTime::GetCurrentTime();
 	CString sCurTime = mTime.Format("%Y/%m/%d %H:%M:%S");	
@@ -3171,8 +3184,6 @@ void CServiceMng::OnSubmitAddr(PTRMSG pMsg)
 	pNewMsg->SetSourceID(SourceID);
 	
 
-	pNewMsg->m_sourceipaddr =pSrcIF->GetRemoteAddr();
-	pNewMsg->m_sourcecodetype = pSrcIF->GetCodeType();
 
 
 	if(IsLongMsg(pNewMsg))
@@ -4295,7 +4306,10 @@ void CServiceMng::LoadAccountAndRouteConfig()
 				}
 				else if (ulCodeType == CODE_TYPE_CNPP)
 				{
-					CZmqClientService* pSmcIF = new CZmqClientService(pAccount, ulCodeType, ulDrvType, sRemoteAddr, \
+					//CZmqClientService* pSmcIF = new CZmqClientService(pAccount, ulCodeType, ulDrvType, sRemoteAddr, \
+					//	sRemoteAccount, sRemotePassword, ulIFID, ulIFStyle, sLocalAddr);
+					
+					RedisService* pSmcIF = new RedisService(pAccount, ulCodeType, ulDrvType, sRemoteAddr, \
 						sRemoteAccount, sRemotePassword, ulIFID, ulIFStyle, sLocalAddr);
 					pIF = pSmcIF;
 				}
@@ -5847,7 +5861,11 @@ void CServiceMng::OnAddInterface(PTRMSG pMsg)
 						//	pAddInterface->sRemoteAccount, pAddInterface->sRemotePassword, \
 						//	ulIFID, pAddInterface->ulIFStyle, pAddInterface->sLocalAddr);
 						//pNewIF=pSmcIF;
-						CZmqClientService* pSmcIF = new CZmqClientService(pAccount, pAddInterface->ulCodeType, \
+						//CZmqClientService* pSmcIF = new CZmqClientService(pAccount, pAddInterface->ulCodeType, \
+						//	pAddInterface->ulDrvType, pAddInterface->sRemoteAddr, \
+						//	pAddInterface->sRemoteAccount, pAddInterface->sRemotePassword, \
+						//	ulIFID, pAddInterface->ulIFStyle, pAddInterface->sLocalAddr);
+						RedisService* pSmcIF = new RedisService(pAccount, pAddInterface->ulCodeType, \
 							pAddInterface->ulDrvType, pAddInterface->sRemoteAddr, \
 							pAddInterface->sRemoteAccount, pAddInterface->sRemotePassword, \
 							ulIFID, pAddInterface->ulIFStyle, pAddInterface->sLocalAddr);
@@ -9004,6 +9022,7 @@ void  CServiceMng::OnRecvRspFail(CConnPoint* pAccount,CShortMsg * pSM, int nErro
 			// *** SMGW30-15,2004-08-09,wzy add end *** //	
 			
 		{
+			pSM->m_bReturnFrist = 3;//add by wj for marked send to gw error
 			if (!SendToFeeModule(pSM, nError))
 			{
 				TRACE("<%s><%s><%d>    [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
@@ -9102,8 +9121,8 @@ void CServiceMng::ResponseReport(PTRMSG pMsg,char * pSMID,int nCMDStatus,int nty
 	{
 		//***SMGW40-04, 2004-12-19, jdz, modi begin***//
 		int ErrCode = 0;
-		int PriFlag = 0;		
-		
+		int PriFlag = 0;		 
+		VLOG(5)<<"responseReport id="<< SubmitAddrAck.nRecverID <<" seq="<<SubmitAddrAck.nSequenceID;
 		bool ret = SendMsgToIF(&SubmitAddrAck, PriFlag, ErrCode);
 		if(false == ret && OUT_OFF_BUFFER == ErrCode)
 		{
@@ -9124,6 +9143,7 @@ void CServiceMng::ResponseReport(PTRMSG pMsg,char * pSMID,int nCMDStatus,int nty
 			ASSERT(0);
 			TRACE("<%s><%s><%d>    [%x] \n",__FILE__,__FUNCTION__,__LINE__,pTmpMsg);
 			delete pTmpMsg;
+			VLOG(5)<<" id no found "<<pSrcMsg->nSenderID;
 			return;
 		}
 		CConnPoint *pAccount = pIF->GetAccount();
@@ -9132,6 +9152,7 @@ void CServiceMng::ResponseReport(PTRMSG pMsg,char * pSMID,int nCMDStatus,int nty
 			ASSERT(0);
 			TRACE("<%s><%s><%d>    [%x] \n",__FILE__,__FUNCTION__,__LINE__,pTmpMsg);
 			delete pTmpMsg;
+			VLOG(5)<<" account no found "<<pSrcMsg->nSenderID;
 			return;
 		}
 		
@@ -9140,6 +9161,7 @@ void CServiceMng::ResponseReport(PTRMSG pMsg,char * pSMID,int nCMDStatus,int nty
 			//接收状态报告时回失败Ack计数
 			if(pAccount->GetServiceType() != SERVICE_SPMSGW)
 			{
+				VLOG(5)<<" dwReportSendFailAckCount++  "<<pAccount->GetName()<<" "<<ret;
 				pAccount->m_FlowStat.dwReportSendFailAckCount++;
 			}
 		}
@@ -9148,6 +9170,7 @@ void CServiceMng::ResponseReport(PTRMSG pMsg,char * pSMID,int nCMDStatus,int nty
 			//接收状态报告时回成功Ack计数
 			if(pAccount->GetServiceType() != SERVICE_SPMSGW)
 			{
+				VLOG(5)<<" dwReportSendSucAckCount++  "<<pAccount->GetName()<<" "<<ret;
 				pAccount->m_FlowStat.dwReportSendSucAckCount++;		
 			}
 		}
@@ -10935,7 +10958,10 @@ void CServiceMng::DealStep(CShortMsg* pNewMsg)
 				else
 				{
 					if(pNewMsg->m_bReturnFrist==false)
+					{
+						pNewMsg->m_bReturnFrist = true;
 						RespondMsg(pNewMsg, nRet);
+					}
 				}
 				// SMGW43-29, 2005-11-14, wzy modify end //						
 			}
@@ -10943,7 +10969,10 @@ void CServiceMng::DealStep(CShortMsg* pNewMsg)
 			{
 				//给上一级网元回Ack
 				if(pNewMsg->m_bReturnFrist==false)
+				{
 					RespondMsg(pNewMsg, 0);
+					pNewMsg->m_bReturnFrist = true;
+				}
 				
 				//SMGW45-19, 2006-2-14, zf modi begin//
 				//在不转发出去时，需要生成UNIKEY
@@ -11013,6 +11042,7 @@ int CServiceMng::SendReportMsg(CShortMsg* pNewMsg)
 		
 		TRACE("<%s><%s><%d>    [%x] \n",__FILE__,__FUNCTION__,__LINE__,pNewMsg);
 		delete pNewMsg;
+		VLOG(5)<<"dest account is SERVICE_CP_SMG don't send report "<<pDestAccount->GetName();
 		return 0;
 	}
 	//SMGW42-58, 2005-07-27, zhangtao modify end//
@@ -11173,7 +11203,7 @@ int CServiceMng::SendAuthPriceCnfmReqMsg(CShortMsg * pSM)
 	pSM->SetSendCmdID(SMS_AUTHPRICECNFMREQ);
 	TRACE("<%s><%s><%d>  submitsm  [%x] \n",__FILE__,__FUNCTION__,__LINE__,pSM);
 	int iRet = pAccount->GetScheduleQue()->SubmitSM(pSM, pSM->GetPriority());
-	
+	VLOG(5)<<"SendAuthPriceCnfmReqMsg "<<iRet;
 	if (0 != iRet)
 	{//发送失败
 		//如果发送失败
@@ -18990,6 +19020,11 @@ int CServiceMng::SendMsg(CShortMsg* pSendSM)
 	}
 	//end add
 
+	if(pSendAccount->GetServiceType()==SERVICE_CP_SMG_QUEUE)//internal chanel
+	{
+		return pSendAccount->GetScheduleQue()->SubmitSM(pSendSM, pSendSM->GetPriority());
+	}
+
 
 	//add by wj for servicecode convert
 	if ( (pSendAccount->GetServiceType()== SERVICE_CP_SMG||pSendAccount->GetServiceType()==SERVICE_CP_SMG_BALANCE)
@@ -19121,7 +19156,7 @@ void CServiceMng::DealFeeStatusReport(PTRMSG pMsg)
 		{
 			pTsm->data_coding = 15;
 			cancleflg = 1;
-
+			VLOG(5)<<"rcv report from fee no to auth";
 		}
 
 		char sTmpMSISDN[MAX_MSISDN_LEN];
@@ -19231,6 +19266,7 @@ void CServiceMng::DealFeeStatusReport(PTRMSG pMsg)
 			return ;
 		}			
 		
+		VLOG(5)<<"rcv fee report sendto:"<<pAccount->GetName();
 		CShortMsg  * pNewMsg = new CShortMsg(pMsg);		
 		TRACE("<%s><%s><%d> new   [%x] \n",__FILE__,__FUNCTION__,__LINE__,pNewMsg);
 		
@@ -19255,6 +19291,8 @@ void CServiceMng::DealFeeStatusReport(PTRMSG pMsg)
 		pNewMsg->SetSendAccount(pReport->szSndAccountName);
 		pNewMsg->SetRcvAccount(pAccount->GetName()); 
 		
+		VLOG(5)<<"set report msg sndacct:"<<pReport->szSndAccountName<<" rcvaccount:"<<pAccount->GetName();
+
 		ResponseReport(pMsg, pNewMsg->GetSmid(),0,SMS_SHREPORT_ADDR_ACK);
 		
 		char smid[SMID_LENTH];
@@ -19290,6 +19328,7 @@ void CServiceMng::DealFeeStatusReport(PTRMSG pMsg)
 		else
 		{
 			int nret = SendReportMsg(pNewMsg);
+			VLOG(5)<<"SendReport "<<nret;
 			if(0 != nret)
 			{//状态报告发送失败
 				APP_BEGIN_LOG(0)

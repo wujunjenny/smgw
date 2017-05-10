@@ -7,6 +7,7 @@
 #include "cngpservice.h"
 #include "ptopservice.h"
 #include "zmqclientService.h"
+#include "RedisService.h"
 #include "servicemng.h"
 #include <iostream>
 #include <fstream>
@@ -952,10 +953,18 @@ int OmcManager::SetInterfaces(CConnPoint* pAccount,rapidjson::Value& reader,rapi
 					}
 					else if (codetype == CODE_TYPE_CNPP)
 					{
-						CZmqClientService* pSmcIF = new CZmqClientService(pAccount,codetype, \
+
+						//CZmqClientService* pSmcIF = new CZmqClientService(pAccount,codetype, \
+						//	drvtype, remoteaddr.c_str(), \
+						//	remoteacct.c_str(),remotepass.c_str(), \
+						//	ulIFID, iftype, localaddr.c_str());
+
+						RedisService* pSmcIF = new RedisService ( pAccount,codetype, \
 							drvtype, remoteaddr.c_str(), \
 							remoteacct.c_str(),remotepass.c_str(), \
-							ulIFID, iftype, localaddr.c_str());
+							ulIFID, iftype, localaddr.c_str()
+							);
+
 						pNewIF=pSmcIF;
 					}
 					else if (codetype == CODE_TYPE_CMPP)

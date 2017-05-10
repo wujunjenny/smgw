@@ -985,7 +985,7 @@ BOOL CSMFile::LoadToMem(const CString &strName, BOOL bLoadInfoOnly)
 				else
 				{
 					VLOG(5) << "Load long sm data from file";
-					LONGSM::Clongsmdata<CShortMsg>* plsm = new LONGSM::Clongsmdata<CShortMsg>();
+					LONGSM::Clongsmdata<CShortMsg>* plsm = new LONGSM::Clongsmdata<CShortMsg>(&pk);
 
 					pSM = plsm;
 				}

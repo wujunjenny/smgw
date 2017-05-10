@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\work\redis-3.0\redis-3.0\msvs\RedisApi\RedisApi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><PreprocessorDefinitions>EVENT_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\work\redis-3.0\redis-3.0\msvs\RedisApi\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RedisApi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+  <Target Name="redis-link" AfterTargets="AfterBuild">
+     <Message Text="Copying RedisApi.dll -&gt; $(TargetDir)RedisApi.dll" Importance="high" />
+    <Copy SourceFiles="C:\work\redis-3.0\redis-3.0\msvs\RedisApi\Release\RedisApi.dll" DestinationFiles="$(TargetDir)RedisApi.dll" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="C:\work\redis-3.0\redis-3.0\msvs\RedisApi\Release\RedisApi.pdb" DestinationFiles="$(TargetDir)RedisApi.pdb" SkipUnchangedFiles="true" />
+  </Target>
+ </Project>

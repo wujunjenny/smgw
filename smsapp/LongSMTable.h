@@ -79,11 +79,11 @@ namespace LONGSM
 			{
 				if(itr==map.begin())
 				{
-					makelongsm(itr->second.data(),itr->second.size(),itr->first.c_str());
+					makelongsm((void*)itr->second.data(),itr->second.size(),itr->first.c_str());
 				}
 				else
 				{
-					combinesubsm(itr->second.data(),itr->second.size(),itr->first.c_str());
+					combinesubsm((void*)itr->second.data(),itr->second.size(),itr->first.c_str());
 				}
 			}
 		};
@@ -132,7 +132,9 @@ namespace LONGSM
 			for(auto itr = subcontents.begin();itr != subcontents.end();itr++)
 			{
 				//psubcontents->insert(make_pair(itr->second,string(itr->first.begin(),itr->first.end())));
-				auto& v = psubcontents->at(itr->second);
+				auto rt = psubcontents->insert(google::protobuf::MapPair<std::string,std::string>(itr->second,""));
+				auto& v = rt.first->second;
+				//auto& v = psubcontents->at(itr->second);
 				v.replace(v.begin(),v.end(),itr->first.begin(),itr->first.end());
 			}
 			return move(pb);

@@ -2971,7 +2971,8 @@ int CCmppAndSmpp::fnGetSubmitSmResp(char **cppOrgBuff,int& nDeCnt,char **cppDest
 
 	if(fnGetFromCode(cppOrgBuff,nDeCnt,sTatus,sizeof(sTatus))==DECODE_PROTOCOL_ERROR)
 		return(DECODE_PROTOCOL_ERROR);
-	phead->Command_Status=  ToInCode(ERR_CMPP_DELIVER_SM_RESP,sTatus);
+	//phead->Command_Status=  ToInCode(ERR_CMPP_DELIVER_SM_RESP,sTatus);
+	phead->Command_Status=  sTatus;//ToInCode(ERR_CMPP_DELIVER_SM_RESP,sTatus);
 
 	(*cppDestValid)+=sizeof( Submit_Sm_Resp);
 	return(DECODE_SUCCEED);
@@ -5255,8 +5256,8 @@ int CCmpp30AndSmpp::fnGetSubmitSmResp(char **cppOrgBuff,int& nDeCnt,char **cppDe
 	if(fnGetFromCode(cppOrgBuff,nDeCnt,status,sizeof(status))==DECODE_PROTOCOL_ERROR)
 		return(DECODE_PROTOCOL_ERROR);
 	//status = ntohl(status);
-	phead->Command_Status=  ToInCode(ERR_CMPP_DELIVER_SM_RESP,status);
-
+	//phead->Command_Status=  ToInCode(ERR_CMPP_DELIVER_SM_RESP,status);
+	phead->Command_Status=status;
 	(*cppDestValid)+=sizeof( Submit_Sm_Resp);
 	return(DECODE_SUCCEED);
 }

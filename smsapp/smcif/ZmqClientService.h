@@ -169,6 +169,7 @@ protected:
 	int SendShakehand(zsock_t* sock,int status);
 	int ProcessSend(proxy_socket_data* env);
 
+
 	static int proxy_read_event (zloop_t *loop, zsock_t *reader, void *arg);
 	static int time_event_for_shakehand (zloop_t *loop, int timer_id, void *arg);
 	static int time_event_for_checkbusy (zloop_t *loop, int timer_id, void *arg);

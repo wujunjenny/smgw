@@ -62,6 +62,7 @@ public:
 	//¼øÈ¨´íÎóÂë
 	long int GetAuthErrCode();	
 	bool SetAuthErrCode(long int AuthErrCode);
+	bool HasAuthErrCode(int* perro=nullptr);
 	// SMGW251-29, 2007-3-26, wzy add begin //
 	bool SetNotifyFlag(long int nNotifyFlag);
 	// SMGW251-29, 2007-3-26, wzy add end //	

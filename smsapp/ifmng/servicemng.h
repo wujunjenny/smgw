@@ -104,6 +104,7 @@ public:
 	virtual ~CServiceMng();
 	friend class OmcManager;
 	friend class CZmqThread;
+	friend class RedisService;
 public:	
 	//SMGW251-28, 2007-3-5,chenjing add CPID begin//
 	int m_nCPIDPrefix;			//存放CPID前缀载入数量

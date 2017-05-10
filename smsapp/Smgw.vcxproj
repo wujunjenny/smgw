@@ -38,11 +38,15 @@
     <Import Project="ZeroMQ Common Settings.props" />
     <Import Project="log.props" />
     <Import Project="protobuf.props" />
+    <Import Project="redis.props" />
+    <Import Project="libevent.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
     <Import Project="log.props" />
+    <Import Project="redis.props" />
+    <Import Project="libevent.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -192,6 +196,7 @@
     <ClCompile Include="ifmng\connpoint.cpp" />
     <ClCompile Include="ContentFilter.cpp" />
     <ClCompile Include="DbgViewDlg.cpp" />
+    <ClCompile Include="smcif\RedisService.cpp" />
     <ClCompile Include="smcif\ZmqClientService.cpp" />
     <ClCompile Include="smtable\dealshortmsg.cpp" />
     <ClCompile Include="DynamicLED.cpp" />
@@ -315,6 +320,7 @@
     <ClInclude Include="ContentFilter.h" />
     <ClInclude Include="..\Common\DataType.h" />
     <ClInclude Include="DbgViewDlg.h" />
+    <ClInclude Include="smcif\RedisService.h" />
     <ClInclude Include="smcif\ZmqClientService.h" />
     <ClInclude Include="smtable\dealshortmsg.h" />
     <ClInclude Include="DynamicLED.h" />

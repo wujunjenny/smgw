@@ -1655,8 +1655,8 @@ void  CDealShortMsg::SendOut(int &nStatus,CConnPoint* pAccount,CShortMsg* pMsg,D
 			}
 			
 			nlen = sizeof(tagSmsSubmitAddr);
-			bool binnner = GetAccount()->GetServiceType()==SERVICE_FEE || GetAccount()->GetServiceType()==SERVICE_CP_SMG_QUEUE;
-			if(!pMsg->GetMessagePacket((tagSmsSubmitAddr*)pTemp,nlen))
+			bool binner = GetAccount()->GetServiceType()==SERVICE_FEE || GetAccount()->GetServiceType()==SERVICE_CP_SMG_QUEUE;
+			if(!pMsg->GetMessagePacket((tagSmsSubmitAddr*)pTemp,nlen,binner))
 			{
 				nStatus =-1;
 				delete[] pTemp;
